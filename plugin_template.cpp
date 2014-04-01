@@ -25,6 +25,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QScrollArea>
+#include <QGroupBox>
 
 
 extern "C" Plugin::Object *
@@ -47,7 +48,7 @@ PluginTemplate::PluginTemplate(void) :
 
 //  QWhatsThis::add(this, "<p><b>PluginTemplate:</b><br>QWhatsThis description.</p>");
 
-  this->setWhatsThis(tr("<p><b>PluginTemplate:</b><br>QWhatsThis description.</p>"));
+//  this->setWhatsThis(tr("<p><b>PluginTemplate:</b><br>QWhatsThis description.</p>"));
   createGUI(vars, num_vars); // this is required to create the GUI
   update( INIT); // this is optional, you may place initialization code directly into the constructor
   refresh(); // this is required to update the GUI with parameter and state values
@@ -103,8 +104,21 @@ PluginTemplate::createGUI(DefaultGUIModel::variable_t *var, int size)
 
   //overall GUI layout with a "horizontal box" copied from DefaultGUIModel
 
-  QBoxLayout *layout = new QVBoxLayout(this);
-  QScrollArea *sv = new QScrollArea(this);
+  QBoxLayout *layout = new QVBoxLayout;
+
+  QGroupBox *bttnGroup = new QGroupBox("Button Panel");
+  QHBoxLayout *bttnGroupLayout = new QHBoxLayout;
+  QPushButton *aBttn = new QPushButton("Button A");
+  QPushButton *bBttn = new QPushButton("Button B");
+  bttnGroupLayout->addWidget(aBttn);
+  bttnGroupLayout->addWidget(bBttn);
+  bttnGroup->setLayout(bttnGroupLayout);
+  QObject::connect(aBttn, SIGNAL(clicked()), this, SLOT(aBttn_event()));
+  QObject::connect(bBttn, SIGNAL(clicked()), this, SLOT(bBttn_event()));
+
+  layout->addWidget(bttnGroup);
+
+  QScrollArea *sv = new QScrollArea;
   sv->setWidgetResizable(true);
   layout->addWidget(sv);
 
@@ -159,22 +173,22 @@ PluginTemplate::createGUI(DefaultGUIModel::variable_t *var, int size)
 	  }
   }
 
-  QWidget *hbox1 = new QWidget;
+  QGroupBox *utilityBox = new QGroupBox;
 
-  pauseButton = new QPushButton("Pause", this);
+  pauseButton = new QPushButton("Pause");
   pauseButton->setCheckable(true);
   QObject::connect(pauseButton, SIGNAL(toggled(bool)),this,SLOT(pause(bool)));
-  modifyButton = new QPushButton("Modify", this);
+  modifyButton = new QPushButton("Modify");
   QObject::connect(modifyButton,SIGNAL(clicked(void)),this,SLOT(modify(void)));
-  unloadButton = new QPushButton("Unload", this);
+  unloadButton = new QPushButton("Unload");
   QObject::connect(unloadButton,SIGNAL(clicked(void)),this,SLOT(exit(void)));
-  QHBoxLayout *qhboxlayout = new QHBoxLayout;
-  qhboxlayout->addWidget(pauseButton);
-  qhboxlayout->addWidget(modifyButton);
-  qhboxlayout->addWidget(unloadButton);
-  hbox1->setLayout(qhboxlayout);
+  QHBoxLayout *utilityBoxLayout = new QHBoxLayout;
+  utilityBoxLayout->addWidget(pauseButton);
+  utilityBoxLayout->addWidget(modifyButton);
+  utilityBoxLayout->addWidget(unloadButton);
+  utilityBox->setLayout(utilityBoxLayout);
 
-  layout->addWidget(hbox1);
+  layout->addWidget(utilityBox);
   show();
 
 /*

@@ -5,16 +5,16 @@
 
 #include <default_gui_model.h>
 
-class MyPluginGUI : public DefaultGUIModel
+class PluginTemplate : public DefaultGUIModel
 {
 
   Q_OBJECT
 
 public:
 
-  MyPluginGUI(void);
+  PluginTemplate(void);
   virtual
-  ~MyPluginGUI(void);
+  ~PluginTemplate(void);
 
   void
   execute(void);
@@ -35,7 +35,7 @@ private:
 private slots:
 // these are custom functions that can also be connected
 // to events through the Qt API. they must be implemented
-// in my_plugin_gui.cpp
+// in plugin_template.cpp
 
   void
   aBttn_event(void);

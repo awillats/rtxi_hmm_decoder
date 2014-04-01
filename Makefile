@@ -1,10 +1,10 @@
 
-PLUGIN_NAME = my_plugin_gui
+PLUGIN_NAME = plugin_template
 
-HEADERS = my_plugin_gui.h
+HEADERS = plugin_template.h
 
-SOURCES = my_plugin_gui.cpp\
-          moc_my_plugin_gui.cpp\
+SOURCES = plugin_template.cpp\
+          moc_plugin_template.cpp\
 
 LIBS = 
 

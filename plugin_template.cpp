@@ -3,24 +3,34 @@
  * DefaultGUIModel with a custom GUI.
  */
 
-#include <my_plugin_gui.h>
+#include <plugin_template.h>
 #include <main_window.h>
-#include <qgridview.h>
-#include <qhbox.h>
-#include <qhbuttongroup.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qtimer.h>
-#include <qtooltip.h>
-#include <qvalidator.h>
-#include <qvbox.h>
-#include <qwhatsthis.h>
+
+//#include <qgridview.h>
+//#include <qhbox.h>
+//#include <qhbuttongroup.h>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
+#include <QTimer>
+#include <QToolTip>
+#include <QValidator>
+//#include <qvbox.h>
+#include <QWhatsThis>
+
+// are these okay?
+#include <QGridLayout>
+#include <QTableWidget>
+#include <QButtonGroup>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QScrollArea>
+
 
 extern "C" Plugin::Object *
 createRTXIPlugin(void)
 {
-  return new MyPluginGUI();
+  return new PluginTemplate();
 }
 
 static DefaultGUIModel::variable_t vars[] =
@@ -31,28 +41,30 @@ static DefaultGUIModel::variable_t vars[] =
 
 static size_t num_vars = sizeof(vars) / sizeof(DefaultGUIModel::variable_t);
 
-MyPluginGUI::MyPluginGUI(void) :
-  DefaultGUIModel("MyPluginGUI with Custom GUI", ::vars, ::num_vars)
+PluginTemplate::PluginTemplate(void) :
+  DefaultGUIModel("PluginTemplate with Custom GUI", ::vars, ::num_vars)
 {
 
-  QWhatsThis::add(this, "<p><b>MyPluginGUI:</b><br>QWhatsThis description.</p>");
+//  QWhatsThis::add(this, "<p><b>PluginTemplate:</b><br>QWhatsThis description.</p>");
+
+  this->setWhatsThis(tr("<p><b>PluginTemplate:</b><br>QWhatsThis description.</p>"));
   createGUI(vars, num_vars); // this is required to create the GUI
   update( INIT); // this is optional, you may place initialization code directly into the constructor
   refresh(); // this is required to update the GUI with parameter and state values
 }
 
-MyPluginGUI::~MyPluginGUI(void)
+PluginTemplate::~PluginTemplate(void)
 {
 }
 
 void
-MyPluginGUI::execute(void)
+PluginTemplate::execute(void)
 {
   return;
 }
 
 void
-MyPluginGUI::update(DefaultGUIModel::update_flags_t flag)
+PluginTemplate::update(DefaultGUIModel::update_flags_t flag)
 {
   switch (flag)
     {
@@ -84,15 +96,88 @@ MyPluginGUI::update(DefaultGUIModel::update_flags_t flag)
  */
 
 void
-MyPluginGUI::createGUI(DefaultGUIModel::variable_t *var, int size)
+PluginTemplate::createGUI(DefaultGUIModel::variable_t *var, int size)
 {
 
   setMinimumSize(200, 300); // Qt API for setting window size
 
   //overall GUI layout with a "horizontal box" copied from DefaultGUIModel
 
-  QBoxLayout *layout = new QHBoxLayout(this);
+  QBoxLayout *layout = new QVBoxLayout(this);
+  QScrollArea *sv = new QScrollArea(this);
+  sv->setWidgetResizable(true);
+  layout->addWidget(sv);
 
+  QWidget *viewport = new QWidget(sv->viewport());
+  sv->setWidget(viewport);
+  QGridLayout *scrollLayout = new QGridLayout(viewport);
+  
+  size_t nstate = 0, nparam = 0, nevent = 0, ncomment = 0;
+  for (size_t i = 0; i < size; i++) {
+	  if (var[i].flags & (PARAMETER | STATE | EVENT | COMMENT)) {
+		  param_t param;
+
+		  param.label = new QLabel(QString::fromStdString(var[i].name), viewport);
+		  scrollLayout->addWidget(param.label, parameter.size(), 0);
+		  param.edit = new DefaultGUILineEdit(viewport);
+		  scrollLayout->addWidget(param.edit, parameter.size(), 1);
+
+		  param.label->setToolTip(QString::fromStdString(var[i].description));
+		  param.edit->setToolTip(QString::fromStdString(var[i].description));
+
+		  if (var[i].flags & PARAMETER) {
+			  if (var[i].flags & DOUBLE) {
+				  param.edit->setValidator(new QDoubleValidator(param.edit));
+				  param.type = PARAMETER | DOUBLE;
+			  } else if (var[i].flags & UINTEGER) {
+				  QIntValidator *validator = new QIntValidator(param.edit);
+				  param.edit->setValidator(validator);
+				  validator->setBottom(0);
+				  param.type = PARAMETER | UINTEGER;
+			  } else if (var[i].flags & INTEGER) {
+				  param.edit->setValidator(new QIntValidator(param.edit));
+				  param.type = PARAMETER | INTEGER;
+			  } else 
+			     param.type = PARAMETER;
+			  param.index = nparam++;
+			  param.str_value = new QString;
+		  } else if (var[i].flags & STATE) { 
+			  param.edit->setReadOnly(true);
+			  palette.setBrush(param.edit->foregroundRole(), Qt::darkGray);
+			  param.edit->setPalette(palette);
+			  param.type = STATE;
+			  param.index = nstate++;
+		  } else if (var[i].flags & EVENT) {
+			  param.edit->setReadOnly(true);
+			  param.type = EVENT;
+			  param.index = nevent++;
+		  } else if (var[i].flags & COMMENT) {
+			  param.type = COMMENT;
+			  param.index = ncomment++;
+		  }
+		  parameter[QString::fromStdString(var[i].name)] = param;
+	  }
+  }
+
+  QWidget *hbox1 = new QWidget;
+
+  pauseButton = new QPushButton("Pause", this);
+  pauseButton->setCheckable(true);
+  QObject::connect(pauseButton, SIGNAL(toggled(bool)),this,SLOT(pause(bool)));
+  modifyButton = new QPushButton("Modify", this);
+  QObject::connect(modifyButton,SIGNAL(clicked(void)),this,SLOT(modify(void)));
+  unloadButton = new QPushButton("Unload", this);
+  QObject::connect(unloadButton,SIGNAL(clicked(void)),this,SLOT(exit(void)));
+  QHBoxLayout *qhboxlayout = new QHBoxLayout;
+  qhboxlayout->addWidget(pauseButton);
+  qhboxlayout->addWidget(modifyButton);
+  qhboxlayout->addWidget(unloadButton);
+  hbox1->setLayout(qhboxlayout);
+
+  layout->addWidget(hbox1);
+  show();
+
+/*
   //additional GUI layouts with "vertical" layouts that will later
   // be added to the overall "layout" above
   QBoxLayout *leftlayout = new QVBoxLayout();
@@ -208,15 +293,16 @@ MyPluginGUI::createGUI(DefaultGUIModel::variable_t *var, int size)
   //layout->addLayout(rightlayout);
 
   show(); // this line is required to render the GUI
+*/
 }
 
 // functions designated as Qt slots are implemented as regular C++ functions
 void
-MyPluginGUI::aBttn_event(void){
+PluginTemplate::aBttn_event(void){
 
 }
 
 void
-MyPluginGUI::bBttn_event(void){
+PluginTemplate::bBttn_event(void){
 
 }

@@ -3,6 +3,7 @@
  * DefaultGUIModel with a custom GUI.
  */
 
+#include <QMdiArea>
 #include <default_gui_model.h>
 
 class PluginTemplate : public DefaultGUIModel
@@ -31,6 +32,9 @@ private:
   double some_parameter;
   double some_state;
   double period;
+
+  QMdiSubWindow *subWindow;
+  
 
 private slots:
 // these are custom functions that can also be connected

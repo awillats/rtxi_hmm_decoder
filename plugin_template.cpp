@@ -92,22 +92,25 @@ PluginTemplate::update(DefaultGUIModel::update_flags_t flag)
  * from DefaultGUIModel.
  */
 
+/*
 void
 PluginTemplate::createGUI(DefaultGUIModel::variable_t *var, int size)
 {
 
 //  this->setFixedSize(200, 300); // Qt API for setting window size
  
-/*  setAttribute(Qt::WA_DeleteOnClose);
-  QMdiSubWindow *pluginWindow = new QMdiSubWindow;
-  pluginWindow->setFixedSize(300,300);
-  MainWindow::getInstance()->createMdi(pluginWindow);
-*/
+  setAttribute(Qt::WA_DeleteOnClose);
+  subWindow = new QMdiSubWindow;
+  subWindow->setFixedSize(200,300);
+  subWindow->setAttribute(Qt::WA_DeleteOnClose);
+  subWindow->setWindowFlags(Qt::CustomizeWindowHint);
+  subWindow->setWindowFlags(Qt::WindowCloseButtonHint);
+  MainWindow::getInstance()->createMdi(subWindow);
 
   //overall GUI layout with a "horizontal box" copied from DefaultGUIModel
 
-  QBoxLayout *layout = new QVBoxLayout(this);
-//  QBoxLayout *layout = new QVBoxLayout;
+//  QBoxLayout *layout = new QVBoxLayout(this);
+  QBoxLayout *layout = new QVBoxLayout;
 
   QGroupBox *bttnGroup = new QGroupBox("Button Panel");
   QHBoxLayout *bttnGroupLayout = new QHBoxLayout;
@@ -195,9 +198,15 @@ PluginTemplate::createGUI(DefaultGUIModel::variable_t *var, int size)
 
 //  pluginWindow->setWidget(this);
 //  pluginWindow->setLayout(layout);
+
+  setLayout(layout);
+  setWindowTitle("Plugin Template");
+  subWindow->setWidget(this);
+
   show();
 
 }
+*/
 
 // functions designated as Qt slots are implemented as regular C++ functions
 void

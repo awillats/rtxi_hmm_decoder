@@ -17,10 +17,9 @@ public:
   virtual
   ~PluginTemplate(void);
 
-  void
-  execute(void);
-  void
-  createGUI(DefaultGUIModel::variable_t *, int);
+  void execute(void);
+  void createGUI(DefaultGUIModel::variable_t *, int);
+  void customizeGUI(void);
 
 protected:
 
@@ -32,9 +31,6 @@ private:
   double some_parameter;
   double some_state;
   double period;
-
-  QMdiSubWindow *subWindow;
-  
 
 private slots:
 // these are custom functions that can also be connected

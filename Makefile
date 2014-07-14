@@ -1,10 +1,9 @@
+PLUGIN_NAME = plugin-template
 
-PLUGIN_NAME = plugin_template
+HEADERS = plugin-template.h
 
-HEADERS = plugin_template.h
-
-SOURCES = plugin_template.cpp\
-          moc_plugin_template.cpp\
+SOURCES = plugin-template.cpp\
+          moc_plugin-template.cpp\
 
 LIBS = 
 

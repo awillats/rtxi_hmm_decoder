@@ -1,4 +1,4 @@
-PLUGIN_NAME = plugin-template
+PLUGIN_NAME = plugin_template
 
 HEADERS = plugin-template.h
 

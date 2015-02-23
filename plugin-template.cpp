@@ -26,6 +26,7 @@ PluginTemplate::PluginTemplate(void) : DefaultGUIModel("PluginTemplate with Cust
 	customizeGUI();
 	update( INIT ); // this is optional, you may place initialization code directly into the constructor
 	refresh(); // this is required to update the GUI with parameter and state values
+	QTimer::singleShot(0, this, SLOT(resizeMe()));
 }
 
 PluginTemplate::~PluginTemplate(void) { }

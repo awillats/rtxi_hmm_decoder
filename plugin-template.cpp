@@ -6,7 +6,6 @@
 #include <plugin-template.h>
 #include <main_window.h>
 #include <iostream>
-#include <QtGui>
 
 extern "C" Plugin::Object *createRTXIPlugin(void){
 	return new PluginTemplate();

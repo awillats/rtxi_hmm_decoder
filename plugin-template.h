@@ -3,7 +3,6 @@
 * DefaultGUIModel with a custom GUI.
 */
 
-#include <QMdiArea>
 #include <default_gui_model.h>
 
 class PluginTemplate : public DefaultGUIModel {

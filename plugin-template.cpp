@@ -23,6 +23,7 @@ PluginTemplate::PluginTemplate(void) : DefaultGUIModel("PluginTemplate with Cust
 	setWhatsThis("<p><b>PluginTemplate:</b><br>QWhatsThis description.</p>");
 	DefaultGUIModel::createGUI(vars, num_vars); // this is required to create the GUI
 	customizeGUI();
+	initParameters();
 	update( INIT ); // this is optional, you may place initialization code directly into the constructor
 	refresh(); // this is required to update the GUI with parameter and state values
 	QTimer::singleShot(0, this, SLOT(resizeMe()));
@@ -32,6 +33,11 @@ PluginTemplate::~PluginTemplate(void) { }
 
 void PluginTemplate::execute(void) {
 	return;
+}
+
+void PluginTemplate::initParameters(void) {
+	some_parameter = 0;
+	some_state = 0;
 }
 
 void PluginTemplate::update(DefaultGUIModel::update_flags_t flag) {

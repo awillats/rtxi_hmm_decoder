@@ -16,9 +16,9 @@
 */
 
 /*
-* This is a template implementation file for a user module derived from
-* DefaultGUIModel with a custom GUI.
-*/
+ * This is a template implementation file for a user module derived from
+ * DefaultGUIModel with a custom GUI.
+ */
 
 #include <plugin-template.h>
 #include <main_window.h>

@@ -20,7 +20,7 @@
  * DefaultGUIModel with a custom GUI.
  */
 
-#include <plugin-template.h>
+#include "plugin-template.h"
 #include <main_window.h>
 #include <iostream>
 
@@ -31,6 +31,12 @@ extern "C" Plugin::Object *createRTXIPlugin(void){
 static DefaultGUIModel::variable_t vars[] = {
 	{ "GUI label", "Tooltip description", DefaultGUIModel::PARAMETER
 		| DefaultGUIModel::DOUBLE, },
+	{ "GUI label", "Tooltip description", DefaultGUIModel::PARAMETER
+		| DefaultGUIModel::DOUBLE, },
+	{ "GUI label", 
+		"Tooltip description", 
+		DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE, 
+	},
 	{ "A State", "Tooltip description", DefaultGUIModel::STATE, }, 
 };
 
@@ -106,4 +112,3 @@ void PluginTemplate::customizeGUI(void) {
 void PluginTemplate::aBttn_event(void) { }
 
 void PluginTemplate::bBttn_event(void) { }
-

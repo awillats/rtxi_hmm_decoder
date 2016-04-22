@@ -9,8 +9,8 @@ LIMITATIONS="none"
 
 PLUGIN_NAME=$(cat "${CPPFILE}" | sed -n "s/.*DefaultGUIModel(\"\(.*\)\".*/\1/p")
 DESCRIPTION=$(cat "${CPPFILE}" | sed -n "s/.*setWhatsThis(\"\(.*\)\".*/\1/p")
-VARS_ARRAY=$(grep -Pzo "(?s)^(\s*)\N*vars\[\].*?{.*?^\1}" "${CPPFILE}")
-
+VARS_ARRAY=$(grep -Pzo "(?s)^(\s*)\N*vars\[\].*?{.*?^\1};" "${CPPFILE}" | \
+             grep -Pzo "(?s)^(\s*)\N.*?{.*?^\1}," | sed -e "s/\t//g")
 
 echo "### ${PLUGIN_NAME}"                 > "${README}"
 echo ""                                  >> "${README}"

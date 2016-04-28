@@ -31,12 +31,6 @@ extern "C" Plugin::Object *createRTXIPlugin(void){
 static DefaultGUIModel::variable_t vars[] = {
 	{ "GUI label", "Tooltip description", DefaultGUIModel::PARAMETER
 		| DefaultGUIModel::DOUBLE, },
-	{ "GUI label", "Tooltip description", DefaultGUIModel::PARAMETER
-		| DefaultGUIModel::DOUBLE, },
-	{ "GUI label", 
-		"Tooltip description", 
-		DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE, 
-	},
 	{ "A State", "Tooltip description", DefaultGUIModel::STATE, }, 
 };
 

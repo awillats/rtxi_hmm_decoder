@@ -10,7 +10,9 @@ REQUIREMENTS="none"
 LIMITATIONS="none"
 
 PLUGIN_NAME=$(cat "${CPPFILE}" | sed -n "s/.*DefaultGUIModel(\"\(.*\)\".*/\1/p")
-DESCRIPTION=$(cat "${CPPFILE}" | sed -n "s/.*setWhatsThis(\"\(.*\)\".*/\1/p")
+QWHATSTHIS=$(awk '/setWhatsThis/,/);/' "${CPPFILE}")
+DESCRIPTION=$(echo "${QWHATSTHIS}" | tr -d "\n" | tr -d "\t" | tr -d "\"" | \
+              sed -n "s/setWhatsThis(\(.*\));/\1/p")
 VARS_ARRAY=$(grep -Pzo "(?s)^(\s*)\N*vars\[\].*?{.*?^\1};" "${CPPFILE}")
 CATAPULT=$(echo ${VARS_ARRAY} | tr -d '\n' | \
 awk ' BEGIN { p=0 } 

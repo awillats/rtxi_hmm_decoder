@@ -90,8 +90,8 @@ function PRINT_VARIABLES() {
 
 echo "### ${PLUGIN_NAME}"                          > "${README}"
 echo ""                                           >> "${README}"
-echo "**Requirements:** ${REQUIREMENTS}"          >> "${README}"
-echo "**Limitations:** ${LIMITATIONS}"            >> "${README}"
+echo "**Requirements:** ${REQUIREMENTS}  "        >> "${README}"
+echo "**Limitations:** ${LIMITATIONS}  "          >> "${README}"
 echo ""                                           >> "${README}"
 echo "![${PLUGIN_NAME} GUI](${SCREENSHOT})"       >> "${README}"
 echo ""                                           >> "${README}"

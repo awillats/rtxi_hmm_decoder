@@ -37,10 +37,11 @@ SCREENSHOT="${PWD##*/}.png"
 
 README=NEW_README.md
 
-REQUIREMENTS="none"
-LIMITATIONS="none"
+REQUIREMENTS=None
+LIMITATIONS=None
 
-PLUGIN_NAME=$(cat "${CPPFILE}" | sed -n "s/.*DefaultGUIModel(\"\(.*\)\".*/\1/p")
+PLUGIN_NAME=$(cat "${CPPFILE}" | sed -n "s/.*DefaultGUIModel(\"\(.*\)\".*/\1/p" | \
+              sed -e 's/ \([A-Z][a-z]\)/ \1/g')
 QWHATSTHIS=$(awk '/setWhatsThis/,/);/' "${CPPFILE}")
 DESCRIPTION=$(echo "${QWHATSTHIS}" | tr -d "\n" | tr -d "\t" | tr -d "\"" | \
               sed -n "s/setWhatsThis(\(.*\));/\1/p")

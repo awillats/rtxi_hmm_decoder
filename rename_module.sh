@@ -34,7 +34,7 @@ mv ${OLDPNG} ${PNG}
 echo "${OLDCLASS} -> ${CLASS}"
 sed -i "s/${OLDCLASS}/${CLASS}/g" ${HEADER} ${SOURCE}
 
-echo "Editing Makefile"
-sed -i "s/${OLDHEADER}/${HEADER}/g" Makefile
-sed -i "s/${OLDSOURCE}/${SOURCE}/g" Makefile
-sed -i "s/${OLDOBJECT}/${OBJECT}/g" Makefile
+echo "Editing references to ${OBJECT}, ${SOURCE}, and ${HEADER}"
+sed -i "s/${OLDHEADER}/${HEADER}/g" Makefile ${HEADER} ${SOURCE}
+sed -i "s/${OLDSOURCE}/${SOURCE}/g" Makefile ${HEADER} ${SOURCE}
+sed -i "s/${OLDOBJECT}/${OBJECT}/g" Makefile ${OBJECT}

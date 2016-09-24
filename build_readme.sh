@@ -40,11 +40,11 @@ README=NEW_README.md
 REQUIREMENTS=None
 LIMITATIONS=None
 
-PLUGIN_NAME=$(cat "${CPPFILE}" | sed -n "s/.*DefaultGUIModel(\"\(.*\)\",.*/\1/p" | \
+PLUGIN_NAME=$(cat "${CPPFILE}" | \
+              sed -n "s/.*DefaultGUIModel(\"\(.*\)\",.*/\1/p" | \
               sed -e 's/ \([A-Z][a-z]\)/ \1/g')
-QWHATSTHIS=$(awk '/^\s*setWhatsThis/,/\);/' "${CPPFILE}")
-DESCRIPTION=$(echo "${QWHATSTHIS}" | tr -d "\n" | tr -d "\t" | tr -d "\"" | \
-              sed -n "s/setWhatsThis(\(.*\));/\1/p")
+DESCRIPTION=$(awk '/^[ \t]*setWhatsThis.*/,/\);/' "${CPPFILE}" | \
+             tr -d '\n' | sed -n "s/^\s*setWhatsThis(.*\"\(.*\)\");/\1\n/p")
 VARS_ARRAY=$(grep -Pzo "(?s)(\s*)\N*vars\[\].*?{.*?\1};" "${CPPFILE}")
 CATAPULT=$(echo ${VARS_ARRAY} | tr -d '\n' | \
 awk ' BEGIN { p=0 } 

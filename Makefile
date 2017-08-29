@@ -1,9 +1,9 @@
-PLUGIN_NAME = plugin_template
+PLUGIN_NAME = hmm_decoder
 
-HEADERS = plugin-template.h
+HEADERS = hmm_decoder.h
 
-SOURCES = plugin-template.cpp\
-          moc_plugin-template.cpp\
+SOURCES = hmm_decoder.cpp\
+          moc_hmm_decoder.cpp\
 
 LIBS = 
 

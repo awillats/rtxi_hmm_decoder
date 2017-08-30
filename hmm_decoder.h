@@ -44,6 +44,13 @@ private:
   double some_state;
   double period;
 
+// HMM guess params
+  double pfr1;
+  double pfr2;
+  double ptr1;
+  double ptr2;
+
+
   void initParameters();
 
 private slots:

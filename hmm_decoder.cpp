@@ -37,6 +37,22 @@ static DefaultGUIModel::variable_t vars[] = {
     DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
   },
   {
+    "FR 1", "Firing rate",
+    DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
+  },
+  {
+    "FR 2", "Firing rate",
+    DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
+  },
+  {
+    "TR 1", "Transition rate",
+    DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
+  },
+  {
+    "TR 2", "Transition rate",
+    DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
+  },
+  {
     "A State", "Tooltip description", DefaultGUIModel::STATE,
   },
 };
@@ -65,6 +81,8 @@ HmmDecoder::~HmmDecoder(void)
 void
 HmmDecoder::execute(void)
 {
+  //pull from input(0) into buffer
+  //decode HMM state in existing buffer
   return;
 }
 

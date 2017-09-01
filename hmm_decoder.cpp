@@ -33,9 +33,18 @@ createRTXIPlugin(void)
 
 static DefaultGUIModel::variable_t vars[] = {
   {
-    "GUI label", "Tooltip description",
-    DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
+    "spike in", "?",
+    DefaultGUIModel::INPUT,
   },
+  {
+    "dec out", "?",
+    DefaultGUIModel::OUTPUT,
+  },
+  {
+    "size out", "?",
+    DefaultGUIModel::OUTPUT,
+  },
+
   {
     "FR 1", "Firing rate",
     DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
@@ -83,6 +92,22 @@ HmmDecoder::execute(void)
 {
   //pull from input(0) into buffer
   //decode HMM state in existing buffer
+
+  advanceSpkBuffer(input(0));
+  std::vector<int>::iterator it = spike_buff.begin();
+  //*(it)=1;
+  //spike_buff.at(1)=1;
+ // output(0) = spike_buff.front();
+ // output(1) = spike_buff.size();
+
+/*
+  if (spike_buff.size() > 0)
+  {
+    output(0) = spike_buff.front();
+  }
+*/
+
+
   return;
 }
 
@@ -91,20 +116,86 @@ HmmDecoder::initParameters(void)
 {
   some_parameter = 0;
   some_state = 0;
+
+  pfr1=30;
+  pfr2=10;
+  ptr1=0.1;
+  ptr2=0.1;
+
+  buffi = 0;
+  bufflen = 1000;
+  
+
+  // I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
+  spike_buff.resize(bufflen,0);
+  state_guess_buff.resize(bufflen,0);
+
+  //std::queue<int> spike_buff(std::vector<int>(bufflen));
+  //std::queue<int> state_guess_buff(std::vector<int>(bufflen));
+  spike_buff[10]=15;
+  std::vector<int>::iterator it = spike_buff.begin();
+  *(it)=7;
+  some_state = spike_buff.size();
+//spike_buff[0];
+
+/*
+  //std::queue<int> Q;
+  for (int i=0; i++; i<bufflen)
+  {
+    spike_buff.push(0);
+    state_guess_buff.push(0);
+    Q.push(i);
+  }
+  some_state= Q.size()+1.2;
+*/
 }
+
+
+void HmmDecoder::advanceSpkBuffer(int newSpk)
+{
+  //spike_buff[0]=7;
+  //spike_buff.at(1) = pfr1;
+
+  //std::vector<int>::iterator it = spike_buff.begin();
+  //*(it)=7;
+
+  /*
+  spike_buff.push(pfr1); //adds to the end
+  if (!spike_buff.empty())
+  {
+    spike_buff.pop();
+  }
+*/
+
+}
+
 
 void
 HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
 {
+  int nnn;
   switch (flag) {
     case INIT:
       period = RT::System::getInstance()->getPeriod() * 1e-6; // ms
-      setParameter("GUI label", some_parameter);
+
       setState("A State", some_state);
+
+      setParameter("FR 1", pfr1);
+      setParameter("FR 2", pfr2);
+      setParameter("TR 1", ptr1);
+      setParameter("TR 2", ptr2);
+
       break;
 
     case MODIFY:
       some_parameter = getParameter("GUI label").toDouble();
+
+//Need to add the *period*1e3 in here;
+     pfr1 = getParameter("FR 1").toDouble();
+     pfr2 = getParameter("FR 2").toDouble();
+     ptr1 = getParameter("TR 1").toDouble();
+     ptr2 = getParameter("TR 2").toDouble();
+
       break;
 
     case UNPAUSE:

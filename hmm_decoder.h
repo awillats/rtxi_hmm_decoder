@@ -22,6 +22,8 @@
  */
 
 #include <default_gui_model.h>
+#include <vector>
+#include <queue>
 
 class HmmDecoder : public DefaultGUIModel
 {
@@ -50,8 +52,17 @@ private:
   double ptr1;
   double ptr2;
 
+  int buffi;
+  int bufflen;
+
+  //std::queue<int> spike_buff;
+  std::vector<int> spike_buff;
+  //std::queue<int> state_guess_buff;
+  std::vector<int> state_guess_buff;
+
 
   void initParameters();
+  void advanceSpkBuffer(int);
 
 private slots:
   // these are custom functions that can also be connected to events

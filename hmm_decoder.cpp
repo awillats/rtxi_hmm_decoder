@@ -94,19 +94,10 @@ HmmDecoder::execute(void)
   //decode HMM state in existing buffer
 
   advanceSpkBuffer(input(0));
-  std::vector<int>::iterator it = spike_buff.begin();
-  //*(it)=1;
-  //spike_buff.at(1)=1;
- // output(0) = spike_buff.front();
- // output(1) = spike_buff.size();
 
-/*
-  if (spike_buff.size() > 0)
-  {
-    output(0) = spike_buff.front();
-  }
-*/
-
+  output(0) = spike_buff.front();
+  output(1) = spike_buff.back();
+  output(2) = spike_buff.size();
 
   return;
 }
@@ -123,50 +114,22 @@ HmmDecoder::initParameters(void)
   ptr2=0.1;
 
   buffi = 0;
-  bufflen = 1000;
+  bufflen = 100;
   
-
-  // I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
+  // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   spike_buff.resize(bufflen,0);
   state_guess_buff.resize(bufflen,0);
-
-  //std::queue<int> spike_buff(std::vector<int>(bufflen));
-  //std::queue<int> state_guess_buff(std::vector<int>(bufflen));
-  spike_buff[10]=15;
-  std::vector<int>::iterator it = spike_buff.begin();
-  *(it)=7;
-  some_state = spike_buff.size();
-//spike_buff[0];
-
-/*
-  //std::queue<int> Q;
-  for (int i=0; i++; i<bufflen)
-  {
-    spike_buff.push(0);
-    state_guess_buff.push(0);
-    Q.push(i);
-  }
-  some_state= Q.size()+1.2;
-*/
 }
 
 
 void HmmDecoder::advanceSpkBuffer(int newSpk)
 {
-  //spike_buff[0]=7;
-  //spike_buff.at(1) = pfr1;
+  //cycle buffer left: http://en.cppreference.com/w/cpp/algorithm/rotate
+  std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
+  spike_buff[bufflen-1]=newSpk;
 
-  //std::vector<int>::iterator it = spike_buff.begin();
-  //*(it)=7;
-
-  /*
-  spike_buff.push(pfr1); //adds to the end
-  if (!spike_buff.empty())
-  {
-    spike_buff.pop();
-  }
-*/
-
+  //spike_buff.push(newSpk); //adds to the end
+  //spike_buff.pop();
 }
 
 

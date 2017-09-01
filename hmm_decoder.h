@@ -24,6 +24,7 @@
 #include <default_gui_model.h>
 #include <vector>
 #include <queue>
+#include <algorithm>
 
 class HmmDecoder : public DefaultGUIModel
 {
@@ -55,9 +56,7 @@ private:
   int buffi;
   int bufflen;
 
-  //std::queue<int> spike_buff;
   std::vector<int> spike_buff;
-  //std::queue<int> state_guess_buff;
   std::vector<int> state_guess_buff;
 
 

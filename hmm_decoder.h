@@ -57,7 +57,7 @@ private:
   double pfr2;
   double ptr1;
   double ptr2;
-  //HMM guess_hmm;//decl is bad
+  HMM guess_hmm();//NEED THESE PARENTHS
 
  
   int buffi;
@@ -71,7 +71,7 @@ private:
   HMM easyBuild(std::vector<double>, std::vector<double>, int, int);//decl is fine
   void advanceSpkBuffer(int);
   void decodeSpkBuffer();
-  //int* decodeHMM(int[], HMM);//decl is bad
+  int* decodeHMM(int[], HMM);//decl is bad
 
 private slots:
   // these are custom functions that can also be connected to events

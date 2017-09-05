@@ -157,18 +157,18 @@ void HmmDecoder::advanceSpkBuffer(int newSpk)
   //spike_buff.pop();
 }
 
-/*
+
 int* HmmDecoder::decodeHMM(int obs[], HMM guess_hmm)
 {
   int* guessed = viterbi(guess_hmm, obs, bufflen);
   return guessed;  
 }
-*/
+
 void HmmDecoder::decodeSpkBuffer()
 {
-    /*
+    
     int* obs = spike_buff.data();
-
+/*
     int* guessed = decodeHMM(obs,guess_hmm);
 
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
@@ -203,6 +203,8 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
      pfr2 = getParameter("FR 2").toDouble();
      ptr1 = getParameter("TR 1").toDouble();
      ptr2 = getParameter("TR 2").toDouble();
+
+	decodeSpkBuffer();
       break;
 
     case UNPAUSE:

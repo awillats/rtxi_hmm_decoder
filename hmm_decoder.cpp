@@ -92,7 +92,6 @@ HmmDecoder::execute(void)
 {
   //pull from input(0) into buffer
   //decode HMM state in existing buffer
-
   advanceSpkBuffer(input(0));
 
   output(0) = spike_buff.front();
@@ -119,6 +118,32 @@ HmmDecoder::initParameters(void)
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   spike_buff.resize(bufflen,0);
   state_guess_buff.resize(bufflen,0);
+
+  std::vector<double> vFr = {0.003, 0.02};
+  std::vector<double> vTr = {0.03, 0.03};
+  HMM bad_hmm = easyBuild(vFr,vTr,2,2);
+
+}
+
+
+//decl is fine, call is fine
+
+HMM HmmDecoder::easyBuild(std::vector<double> vFr, std::vector<double> vTr, int nstates, int nemits)
+{
+    double A0[2] = {1-vTr[0], vTr[0]};
+    double A1[2] = {vTr[1], 1-vTr[1]};
+    double *A[2] = {A0, A1};
+    
+    double B0[2] = {1-vFr[0], vFr[0]};
+    double B1[2] = {1-vFr[1], vFr[1]};
+    double *B[2] = {B0, B1};
+
+    //ideally this would be the transition probabilities...?
+    double PI[2] = {.5,.5};
+
+    HMM easy_hmm(2,2, A,B,PI);
+    //HMM easy_hmm(10);
+    return easy_hmm;
 }
 
 
@@ -130,6 +155,26 @@ void HmmDecoder::advanceSpkBuffer(int newSpk)
 
   //spike_buff.push(newSpk); //adds to the end
   //spike_buff.pop();
+}
+
+/*
+int* HmmDecoder::decodeHMM(int obs[], HMM guess_hmm)
+{
+  int* guessed = viterbi(guess_hmm, obs, bufflen);
+  return guessed;  
+}
+*/
+void HmmDecoder::decodeSpkBuffer()
+{
+    /*
+    int* obs = spike_buff.data();
+
+    int* guessed = decodeHMM(obs,guess_hmm);
+
+    //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
+    std::vector<int> temp_vec(guessed,guessed+bufflen);
+    state_guess_buff = temp_vec;
+    */
 }
 
 
@@ -158,7 +203,6 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
      pfr2 = getParameter("FR 2").toDouble();
      ptr1 = getParameter("TR 1").toDouble();
      ptr2 = getParameter("TR 2").toDouble();
-
       break;
 
     case UNPAUSE:

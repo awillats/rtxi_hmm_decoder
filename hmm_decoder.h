@@ -25,6 +25,11 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+//#include <rtdk.h>
+
+#include "../../../module_help/StAC_rtxi/hmmFuns.hpp"
+//maybe need to uninclude this to fix a prev. broken module?
+#include "../../../module_help/StAC_rtxi/hmm_tests/hmm_fs.hpp"
 
 class HmmDecoder : public DefaultGUIModel
 {
@@ -52,7 +57,9 @@ private:
   double pfr2;
   double ptr1;
   double ptr2;
+  //HMM guess_hmm;//decl is bad
 
+ 
   int buffi;
   int bufflen;
 
@@ -61,7 +68,10 @@ private:
 
 
   void initParameters();
+  HMM easyBuild(std::vector<double>, std::vector<double>, int, int);//decl is fine
   void advanceSpkBuffer(int);
+  void decodeSpkBuffer();
+  //int* decodeHMM(int[], HMM);//decl is bad
 
 private slots:
   // these are custom functions that can also be connected to events

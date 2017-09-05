@@ -22,6 +22,7 @@
  */
 
 #include "hmm_decoder.h"
+
 #include <iostream>
 #include <main_window.h>
 
@@ -75,12 +76,17 @@ HmmDecoder::HmmDecoder(void)
   DefaultGUIModel::createGUI(vars,
                              num_vars); // this is required to create the GUI
   customizeGUI();
+ 
+
+
   initParameters();
   update(INIT); // this is optional, you may place initialization code directly
                 // into the constructor
   refresh();    // this is required to update the GUI with parameter and state
                 // values
   QTimer::singleShot(0, this, SLOT(resizeMe()));
+
+
 }
 
 HmmDecoder::~HmmDecoder(void)
@@ -119,15 +125,33 @@ HmmDecoder::initParameters(void)
   spike_buff.resize(bufflen,0);
   state_guess_buff.resize(bufflen,0);
 
-  std::vector<double> vFr = {0.003, 0.02};
-  std::vector<double> vTr = {0.03, 0.03};
-  HMM bad_hmm = easyBuild(vFr,vTr,2,2);
+
+//COPY PASTED - INIT
+    int* obs = spike_buff.data();
+    std::vector<double> vFr = {0.003, 0.02};
+    std::vector<double> vTr = {0.03, 0.03};
+    double A0[2] = {1-vTr[0], vTr[0]};
+    double A1[2] = {vTr[1], 1-vTr[1]};
+    double *A[2] = {A0, A1};
+    
+    double B0[2] = {1-vFr[0], vFr[0]};
+    double B1[2] = {1-vFr[1], vFr[1]};
+    double *B[2] = {B0, B1};
+
+    //ideally this would be the transition probabilities...?
+    double PI[2] = {.5,.5};
+    //HMM guess_hmm(2,2, A,B,PI);
+    //HMM guess_hmm = HMM();
+    guess_hmm = HMM(3,2,A,B,PI);
+/*
+    //easyBuild();
+    //HMM bad_hmm = easyBuild(vFr,vTr,2,2); /////////////////////////////////////////////////////////////////DEBUG HERE 
+    int* guessed = decodeHMM(obs,guess_hmm);
+   */ 
 
 }
 
-
-//decl is fine, call is fine
-
+/*
 HMM HmmDecoder::easyBuild(std::vector<double> vFr, std::vector<double> vTr, int nstates, int nemits)
 {
     double A0[2] = {1-vTr[0], vTr[0]};
@@ -145,7 +169,7 @@ HMM HmmDecoder::easyBuild(std::vector<double> vFr, std::vector<double> vTr, int 
     //HMM easy_hmm(10);
     return easy_hmm;
 }
-
+*/
 
 void HmmDecoder::advanceSpkBuffer(int newSpk)
 {
@@ -160,21 +184,63 @@ void HmmDecoder::advanceSpkBuffer(int newSpk)
 
 int* HmmDecoder::decodeHMM(int obs[], HMM guess_hmm)
 {
+
   int* guessed = viterbi(guess_hmm, obs, bufflen);
+   
+   for (int i=0; i<bufflen; i++)
+   //for (int i=bufflen; i>0; i--)
+    {
+       printf("%d,",guessed[0]);
+    }
+
+ //   printf("\ndecode done\n");
+
+
   return guessed;  
 }
 
 void HmmDecoder::decodeSpkBuffer()
 {
+    int q = guess_hmm.states;
+    printf("\n\n n=%d later",q);
+
     
     int* obs = spike_buff.data();
-/*
+
+
+  try
+  {
+
+
+    
+    std::vector<double> vFr = {0.003, 0.02};
+    std::vector<double> vTr = {0.03, 0.03};
+    double A0[2] = {1-vTr[0], vTr[0]};
+    double A1[2] = {vTr[1], 1-vTr[1]};
+    double *A[2] = {A0, A1};
+    
+    double B0[2] = {1-vFr[0], vFr[0]};
+    double B1[2] = {1-vFr[1], vFr[1]};
+    double *B[2] = {B0, B1};
+
+    //ideally this would be the transition probabilities...?
+    double PI[2] = {.5,.5};
+    //HMM guess_hmm(2,2, A,B,PI);
+    //guess_hmm = HMM(2,2,A,B,PI);
+
+//    HMM guess_hmm = easyBuild(vFr,vTr,2,2); //DOESNT WORK!
+
+
     int* guessed = decodeHMM(obs,guess_hmm);
+    printf("\ngot here fine\n");
 
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;
-    */
+  }
+  catch(const char* msg)
+  {
+  }  
 }
 
 
@@ -203,8 +269,8 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
      pfr2 = getParameter("FR 2").toDouble();
      ptr1 = getParameter("TR 1").toDouble();
      ptr2 = getParameter("TR 2").toDouble();
-
-	decodeSpkBuffer();
+  decodeSpkBuffer();
+	//decodeSpkBuffer();
       break;
 
     case UNPAUSE:

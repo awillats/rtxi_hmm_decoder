@@ -40,6 +40,8 @@ public:
   HmmDecoder(void);
   virtual ~HmmDecoder(void);
 
+
+
   void execute(void);
   void createGUI(DefaultGUIModel::variable_t*, int);
   void customizeGUI(void);
@@ -47,7 +49,11 @@ public:
 protected:
   virtual void update(DefaultGUIModel::update_flags_t);
 
+
 private:
+
+
+  //static float funGlobe;
   double some_parameter;
   double some_state;
   double period;
@@ -57,7 +63,11 @@ private:
   double pfr2;
   double ptr1;
   double ptr2;
-  HMM guess_hmm();//NEED THESE PARENTHS
+
+  //NB: this seems like bad coding form...
+  HMM guess_hmm = HMM();
+  //extern HMM guess_hmm;
+//NEED THESE PARENTHS
 
  
   int buffi;
@@ -68,7 +78,7 @@ private:
 
 
   void initParameters();
-  HMM easyBuild(std::vector<double>, std::vector<double>, int, int);//decl is fine
+  //HMM easyBuild(std::vector<double>, std::vector<double>, int, int);//decl is fine
   void advanceSpkBuffer(int);
   void decodeSpkBuffer();
   int* decodeHMM(int[], HMM);//decl is bad

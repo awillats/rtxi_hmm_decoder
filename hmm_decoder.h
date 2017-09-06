@@ -31,6 +31,7 @@
 //maybe need to uninclude this to fix a prev. broken module?
 #include "../../../module_help/StAC_rtxi/hmm_tests/hmm_fs.hpp"
 
+#include "../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.hpp"
 class HmmDecoder : public DefaultGUIModel
 {
 
@@ -63,6 +64,10 @@ private:
   double pfr2;
   double ptr1;
   double ptr2;
+
+  std::vector<double> vFr;
+  std::vector<double> vTr;
+
 
   //NB: this seems like bad coding form...
   HMM guess_hmm = HMM();

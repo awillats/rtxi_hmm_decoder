@@ -122,14 +122,17 @@ HmmDecoder::initParameters(void)
   bufflen = 100;
   
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
-  spike_buff.resize(bufflen,0);
+  vFr.resize(2,0);
+  vTr.resize(2,0);
+  spike_buff.resize(bufflen,1);
   state_guess_buff.resize(bufflen,0);
+
 
 
 //COPY PASTED - INIT
     int* obs = spike_buff.data();
-    std::vector<double> vFr = {0.003, 0.02};
-    std::vector<double> vTr = {0.03, 0.03};
+    vFr = {0.003, 0.02};
+    vTr = {0.03, 0.03};
     double A0[2] = {1-vTr[0], vTr[0]};
     double A1[2] = {vTr[1], 1-vTr[1]};
     double *A[2] = {A0, A1};
@@ -138,11 +141,49 @@ HmmDecoder::initParameters(void)
     double B1[2] = {1-vFr[1], vFr[1]};
     double *B[2] = {B0, B1};
 
+
+    std::vector<double> Av0;
+    std::vector<double> Av1;
+    std::vector<double> Bv0;
+    std::vector<double> Bv1;
+    std::vector< std::vector<double>> Av;
+    std::vector< std::vector<double>> Bv;
+    std::vector<double>PIv(2,.5);
+
+
+    Av0.push_back(1-vTr[0]);
+    Av0.push_back(vTr[0]);
+    Av1.push_back(vTr[1]);
+    Av1.push_back(1-vTr[1]);
+
+    Bv0.push_back(1-vFr[0]);
+    Bv0.push_back(vFr[0]);
+    Bv1.push_back(1-vFr[1]);
+    Bv1.push_back(vFr[1]);
+ 
+    Av.push_back(Av0);
+    Av.push_back(Av1);
+
+    Bv.push_back(Bv0);
+    Bv.push_back(Bv1);
+ 
+
+
     //ideally this would be the transition probabilities...?
     double PI[2] = {.5,.5};
     //HMM guess_hmm(2,2, A,B,PI);
     //HMM guess_hmm = HMM();
-    guess_hmm = HMM(3,2,A,B,PI);
+    guess_hmm = HMM(2,2,A,B,PI);
+
+    HMMv gmv = HMMv(2,2,vFr,vTr,PIv);
+    //HMMv gmv = HMMv(2,2,Av,Bv,PIv);
+    int* guessed= viterbi(gmv,spike_buff,bufflen);
+   for (int i=0; i<bufflen; i++)
+   //for (int i=bufflen; i>0; i--)
+    {
+       printf("%d,",guessed[i]);
+    }
+
 /*
     //easyBuild();
     //HMM bad_hmm = easyBuild(vFr,vTr,2,2); /////////////////////////////////////////////////////////////////DEBUG HERE 
@@ -208,15 +249,18 @@ void HmmDecoder::decodeSpkBuffer()
     
     int* obs = spike_buff.data();
 
+  //look vof vFr?
+
 
   try
   {
 
-
-    //for some rason this section also matters?????
-
-    std::vector<double> vFr = {0.003, 0.02};
-    std::vector<double> vTr = {0.03, 0.03};
+    //for some reason these are necessary. Is guess_hmm preserving references to vFr?
+    //std::vector<double> vFr = {0.003, 0.02};
+    //std::vector<double> vTr = {0.03, 0.03};
+    vFr = {0.003, 0.02};
+    vTr = {0.03, 0.03};
+ /*
     double A0[2] = {1-vTr[0], vTr[0]};
     double A1[2] = {vTr[1], 1-vTr[1]};
     double *A[2] = {A0, A1};
@@ -227,14 +271,14 @@ void HmmDecoder::decodeSpkBuffer()
 
     //ideally this would be the transition probabilities...?
     double PI[2] = {.5,.5};
-
+ */
     //HMM guess_hmm(2,2, A,B,PI);
     //guess_hmm = HMM(2,2,A,B,PI);
 
 //    HMM guess_hmm = easyBuild(vFr,vTr,2,2); //DOESNT WORK!
 
 
-    int* guessed = decodeHMM(obs,guess_hmm);
+    //int* guessed = decodeHMM(obs,guess_hmm);
     printf("\ngot here fine\n");
 
     //somewho pointer operations in decodeHMM matter
@@ -242,10 +286,13 @@ void HmmDecoder::decodeSpkBuffer()
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     ///std::vector<int> temp_vec(guessed,guessed+bufflen);
     ///state_guess_buff = temp_vec;
+  
   }
   catch(const char* msg)
   {
+     printf(msg);
   }  
+
 }
 
 

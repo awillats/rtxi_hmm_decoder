@@ -187,16 +187,17 @@ int* HmmDecoder::decodeHMM(int obs[], HMM guess_hmm)
 
   int* guessed = viterbi(guess_hmm, obs, bufflen);
    
+
    for (int i=0; i<bufflen; i++)
    //for (int i=bufflen; i>0; i--)
     {
-       printf("%d,",guessed[0]);
+       printf("%d,",guessed[i]);
     }
 
  //   printf("\ndecode done\n");
 
 
-  return guessed;  
+  return &guessed[0];  
 }
 
 void HmmDecoder::decodeSpkBuffer()
@@ -212,7 +213,8 @@ void HmmDecoder::decodeSpkBuffer()
   {
 
 
-    
+    //for some rason this section also matters?????
+
     std::vector<double> vFr = {0.003, 0.02};
     std::vector<double> vTr = {0.03, 0.03};
     double A0[2] = {1-vTr[0], vTr[0]};
@@ -225,6 +227,7 @@ void HmmDecoder::decodeSpkBuffer()
 
     //ideally this would be the transition probabilities...?
     double PI[2] = {.5,.5};
+
     //HMM guess_hmm(2,2, A,B,PI);
     //guess_hmm = HMM(2,2,A,B,PI);
 
@@ -234,9 +237,11 @@ void HmmDecoder::decodeSpkBuffer()
     int* guessed = decodeHMM(obs,guess_hmm);
     printf("\ngot here fine\n");
 
+    //somewho pointer operations in decodeHMM matter
+
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
-    std::vector<int> temp_vec(guessed,guessed+bufflen);
-    state_guess_buff = temp_vec;
+    ///std::vector<int> temp_vec(guessed,guessed+bufflen);
+    ///state_guess_buff = temp_vec;
   }
   catch(const char* msg)
   {

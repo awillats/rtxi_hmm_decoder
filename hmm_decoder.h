@@ -53,13 +53,11 @@ protected:
 
 private:
 
-
-  //static float funGlobe;
   double some_parameter;
   double some_state;
   double period;
 
-// HMM guess params
+//--- HMM guess params
   double pfr1;
   double pfr2;
   double ptr1;
@@ -68,30 +66,23 @@ private:
   std::vector<double> vFr;
   std::vector<double> vTr;
 
-
   //NB: this seems like bad coding form...
-  HMM guess_hmm = HMM();
-  //extern HMM guess_hmm;
+  HMMv guess_hmm = HMMv();
 //NEED THESE PARENTHS
 
- 
   int buffi;
   int bufflen;
-
   std::vector<int> spike_buff;
   std::vector<int> state_guess_buff;
 
-
   void initParameters();
-  //HMM easyBuild(std::vector<double>, std::vector<double>, int, int);//decl is fine
   void advanceSpkBuffer(int);
   void decodeSpkBuffer();
-  int* decodeHMM(int[], HMM);//decl is bad
+  int* decodeHMM(HMMv);
 
 private slots:
   // these are custom functions that can also be connected to events
   // through the Qt API. they must be implemented in plugin_template.cpp
-
   void aBttn_event(void);
   void bBttn_event(void);
 };

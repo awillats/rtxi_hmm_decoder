@@ -28,9 +28,7 @@
 //#include <rtdk.h>
 
 #include "../../../module_help/StAC_rtxi/hmmFuns.hpp"
-//maybe need to uninclude this to fix a prev. broken module?
 #include "../../../module_help/StAC_rtxi/hmm_tests/hmm_fs.hpp"
-
 #include "../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.hpp"
 class HmmDecoder : public DefaultGUIModel
 {

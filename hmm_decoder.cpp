@@ -204,6 +204,7 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
 
 //Need to add the *period*1e3 in here;
      pfr1 = getParameter("FR 1").toDouble();
+     printf("D:%f\n",pfr1);
      pfr2 = getParameter("FR 2").toDouble();
      ptr1 = getParameter("TR 1").toDouble();
      ptr2 = getParameter("TR 2").toDouble();

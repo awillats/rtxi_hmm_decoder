@@ -155,7 +155,7 @@ HmmDecoder::initParameters(void)
 
     vFr = {pfr1, pfr2};
     vTr = {ptr1, ptr2}; 
-    printf("\ngogogogo\n"); 
+    //printf("\ngogogogo\n"); 
 
     restartHMM();
     decodeSpkBuffer();
@@ -175,11 +175,11 @@ void HmmDecoder::advanceSpkBuffer(int newSpk)
 int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 {
 //printStuff();
-printf("\ngogogogo2 %i\n",bufflen);
+//printf("\ngogogogo2 %i\n",bufflen);
 
-printf("bl:");
+//printf("bl:");
   int* guessed = viterbi(guess_hmm_, spike_buff, bufflen);
-      printf("\ngogogogo3\n");
+  //    printf("\ngogogogo3\n");
     return guessed;
 }
 

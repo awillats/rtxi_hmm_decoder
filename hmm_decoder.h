@@ -54,6 +54,7 @@ private:
   double some_parameter;
   double some_state;
   double period;
+  double period_ms;
 
 //--- HMM guess params
   double pfr1;
@@ -77,6 +78,8 @@ private:
   void advanceSpkBuffer(int);
   void decodeSpkBuffer();
   int* decodeHMM(HMMv);
+  void restartHMM();
+  void printStuff();
 
 private slots:
   // these are custom functions that can also be connected to events

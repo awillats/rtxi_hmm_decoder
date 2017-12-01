@@ -24,6 +24,22 @@
 
 //printing vector options https://stackoverflow.com/questions/10750057/how-to-print-out-the-contents-of-a-vector
 
+
+//vector printing code
+/*
+  printf("\nspikes:\n");
+  for (auto i: spike_buff) { printf("%d`",i); }
+  printf("\n---\n");
+
+  for (int i=0; i<bufflen; i++)
+  {
+       printf("%d,",guessed[i]);
+  }
+  printf("\ndecode done\n");
+*/
+
+
+
 #include "hmm_decoder.h"
 
 #include <iostream>
@@ -104,6 +120,7 @@ HmmDecoder::execute(void)
 {
   //pull from input(0) into buffer
   //decode HMM state in existing buffer
+  
   advanceSpkBuffer(input(0));
   decodeSpkBuffer();
 
@@ -117,69 +134,74 @@ HmmDecoder::execute(void)
 void
 HmmDecoder::initParameters(void)
 {
+
   some_parameter = 0;
   some_state = 0;
 
-  pfr1=30;
-  pfr2=10;
-  ptr1=0.1;
-  ptr2=0.1;
+  pfr1=10e-3;
+  pfr2=30e-3;
+  ptr1=2e-4;
+  ptr2=2e-4;
 
   buffi = 0;
-  bufflen = 100;
-  
+  bufflen = 1000;//holy cow
+
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);
   //vTr.resize(2,0);
+  
   spike_buff.resize(bufflen,1);
   state_guess_buff.resize(bufflen,0);
 
-    vFr = {0.003, 0.02};
-    vTr = {0.03, 0.03}; 
-    std::vector<double>PI(2,.5);
+    vFr = {pfr1, pfr2};
+    vTr = {ptr1, ptr2}; 
+    printf("\ngogogogo\n"); 
 
-    guess_hmm = HMMv(2,2,vFr,vTr,PI);
-    decodeHMM(guess_hmm);
+    restartHMM();
+    decodeSpkBuffer();
 }
-
 
 
 void HmmDecoder::advanceSpkBuffer(int newSpk)
 {
-  //cycle buffer left: http://en.cppreference.com/w/cpp/algorithm/rotate
+    //cycle buffer left: http://en.cppreference.com/w/cpp/algorithm/rotate
   std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
   spike_buff[bufflen-1]=newSpk;
-
-  //spike_buff.push(newSpk); //adds to the end
-  //spike_buff.pop();
+    //spike_buff.push(newSpk); //adds to the end
+    //spike_buff.pop();
 }
 
 
 int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 {
+//printStuff();
+printf("\ngogogogo2 %i\n",bufflen);
 
+printf("bl:");
   int* guessed = viterbi(guess_hmm_, spike_buff, bufflen);
-/*
-  printf("\nspikes:\n");
-  for (auto i: spike_buff) { printf("%d`",i); }
-  printf("\n---\n");
-
-  for (int i=0; i<bufflen; i++)
-  {
-       printf("%d,",guessed[i]);
-  }
-  printf("\ndecode done\n");
-*/
-  return &guessed[0];  
+      printf("\ngogogogo3\n");
+    return guessed;
 }
 
 void HmmDecoder::decodeSpkBuffer()
 {
+
     int* guessed = decodeHMM(guess_hmm);
+
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;
 }
+
+void HmmDecoder::restartHMM()
+{
+    //really,and internalize parameter modifications from GUI
+    //do I actually want to reset the spike buffer? probably not?
+    std::vector<double>PI(2,.5);
+    guess_hmm = HMMv(2,2,vFr,vTr,PI);
+    //decodeSpkBuffer();//?
+}
+
 
 
 void
@@ -189,13 +211,13 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
   switch (flag) {
     case INIT:
       period = RT::System::getInstance()->getPeriod() * 1e-6; // ms
-
+      period_ms = period*1e-3;
       setState("A State", some_state);
 
-      setParameter("FR 1", pfr1);
-      setParameter("FR 2", pfr2);
-      setParameter("TR 1", ptr1);
-      setParameter("TR 2", ptr2);
+      setParameter("FR 1", pfr1/period_ms);
+      setParameter("FR 2", pfr2/period_ms);
+      setParameter("TR 1", ptr1/period_ms);
+      setParameter("TR 2", ptr2/period_ms);
 
       break;
 
@@ -203,12 +225,17 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
       some_parameter = getParameter("GUI label").toDouble();
 
 //Need to add the *period*1e3 in here;
-     pfr1 = getParameter("FR 1").toDouble();
-     printf("D:%f\n",pfr1);
-     pfr2 = getParameter("FR 2").toDouble();
-     ptr1 = getParameter("TR 1").toDouble();
-     ptr2 = getParameter("TR 2").toDouble();
- 
+     pfr1 = getParameter("FR 1").toDouble()*period_ms;
+     pfr2 = getParameter("FR 2").toDouble()*period_ms;
+     ptr1 = getParameter("TR 1").toDouble()*period_ms;
+     ptr2 = getParameter("TR 2").toDouble()*period_ms;
+     
+      vFr = {pfr1, pfr2};  
+      vTr = {ptr1, ptr2};
+      restartHMM();
+     
+     
+     
 	//decodeSpkBuffer();
       break;
 
@@ -246,6 +273,19 @@ HmmDecoder::customizeGUI(void)
   customlayout->addWidget(button_group, 0, 0);
   setLayout(customlayout);
 }
+
+
+void HmmDecoder::printStuff(void)
+{
+    
+
+
+  for (int i=0; i<bufflen; i++)
+  {
+       printf("%d,",spike_buff[i]);
+  }
+}
+
 
 // functions designated as Qt slots are implemented as regular C++ functions
 void

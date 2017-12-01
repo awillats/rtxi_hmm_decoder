@@ -71,7 +71,7 @@ static DefaultGUIModel::variable_t vars[] = {
     DefaultGUIModel::PARAMETER | DefaultGUIModel::DOUBLE,
   },
   {
-    "A State", "Tooltip description", DefaultGUIModel::STATE,
+    "A State", "delete me", DefaultGUIModel::STATE,
   },
 };
 

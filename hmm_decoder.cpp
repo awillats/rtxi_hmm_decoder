@@ -145,7 +145,7 @@ HmmDecoder::initParameters(void)
   ptr2=2e-4;
 
   buffi = 0;
-  bufflen = 100;//holy cow
+  bufflen = 3000;//holy cow
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);
@@ -165,11 +165,20 @@ HmmDecoder::initParameters(void)
 
 void HmmDecoder::advanceSpkBuffer(int newSpk)
 {
+	
+	if (newSpk==99)
+{
+	spike_buff[bufflen-1]=99;	
+	printStuff();
+}
+else
+{
     //cycle buffer left: http://en.cppreference.com/w/cpp/algorithm/rotate
   std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
   spike_buff[bufflen-1]=newSpk;
     //spike_buff.push(newSpk); //adds to the end
     //spike_buff.pop();
+}
 }
 
 
@@ -280,13 +289,18 @@ HmmDecoder::customizeGUI(void)
 
 void HmmDecoder::printStuff(void)
 {
-    
-
-
+printf("\n\n decoder;spike_buff=[");
   for (int i=0; i<bufflen; i++)
   {
        printf("%d,",spike_buff[i]);
   }
+	
+printf("];\nstate_guess=[");
+  for (int i=0; i<bufflen; i++)
+  {
+       printf("%d,",state_guess_buff[i]);
+  }
+printf("];enddec;");
 }
 
 
@@ -294,9 +308,11 @@ void HmmDecoder::printStuff(void)
 void
 HmmDecoder::aBttn_event(void)
 {
+	printStuff();
 }
 
 void
 HmmDecoder::bBttn_event(void)
 {
+	printf(",,");
 }

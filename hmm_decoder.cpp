@@ -122,6 +122,7 @@ HmmDecoder::execute(void)
   //decode HMM state in existing buffer
   
   advanceSpkBuffer(input(0));
+//see if nixing this prevents mem leak
   decodeSpkBuffer();
 
   output(0) = spike_buff.front();
@@ -175,11 +176,11 @@ void HmmDecoder::advanceSpkBuffer(int newSpk)
 int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 {
 //printStuff();
-printf("\ngogogogo2 %i\n",bufflen);
+//..printf("\ngogogogo2 %i\n",bufflen);
 
 //printf("bl:");
   int* guessed = viterbi(guess_hmm_, spike_buff, bufflen);
-     printf("\ngogogogo3\n");
+    //.. printf("\ngogogogo3\n");
     return guessed;
 }
 
@@ -187,10 +188,12 @@ void HmmDecoder::decodeSpkBuffer()
 {
 
     int* guessed = decodeHMM(guess_hmm);
-
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;
+
+    delete[] guessed;//this closes seq which is dynamically allocated inside viterbi
+
 }
 
 void HmmDecoder::restartHMM()

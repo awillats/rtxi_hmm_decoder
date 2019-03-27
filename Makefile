@@ -1,5 +1,8 @@
 PLUGIN_NAME = hmm_decoder
 
+#gflag is to enable better debugging
+CFLAGS = -g -Wall -Wextra
+
 HEADERS = hmm_decoder.h\
           ../../../module_help/StAC_rtxi/hmmFuns.hpp\
           ../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.hpp

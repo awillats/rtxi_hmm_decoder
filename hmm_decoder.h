@@ -28,7 +28,7 @@
 //#include <rtdk.h>
 
 #include "../../../module_help/StAC_rtxi/hmmFuns.hpp"
-#include "../../../module_help/StAC_rtxi/hmm_tests/hmm_fs.hpp"
+//#include "../../../module_help/StAC_rtxi/hmm_tests/hmm_fs.hpp"
 #include "../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.hpp"
 class HmmDecoder : public DefaultGUIModel
 {

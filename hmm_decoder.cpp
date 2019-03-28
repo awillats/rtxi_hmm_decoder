@@ -123,7 +123,8 @@ HmmDecoder::execute(void)
 
   advanceSpkBuffer(input(0));
 //see if nixing this prevents mem leak
-  //decodeSpkBuffer(); //RECENT CHANGE, undo if still broken
+  decodeSpkBuffer(); //RECENT CHANGE, undo if still broken
+  //commenting decodeSpkBuffer is sufficient to allow the decoder module to run
 
   output(0) = spike_buff.front();
   output(1) = spike_buff.back();
@@ -187,6 +188,9 @@ int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 //printStuff();
 //..printf("\ngogogogo2 %i\n",bufflen);
 
+
+//    int* vguess = viterbi(myHMM, myHMM.spikes, nt);
+
 //printf("bl:");
   int* guessed = viterbi(guess_hmm_, spike_buff, bufflen);
     //.. printf("\ngogogogo3\n");
@@ -195,14 +199,15 @@ int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 
 void HmmDecoder::decodeSpkBuffer()
 {
-
+//disabled to isolate bad code!
+/*
     int* guessed = decodeHMM(guess_hmm);
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;
 
     delete[] guessed;//this closes seq which is dynamically allocated inside viterbi
-
+*/
 }
 
 void HmmDecoder::restartHMM()
@@ -273,14 +278,14 @@ HmmDecoder::customizeGUI(void)
 
   QGroupBox* button_group = new QGroupBox;
 
-  QPushButton* abutton = new QPushButton("Button A");
-  QPushButton* bbutton = new QPushButton("Button B");
+  QPushButton* abutton = new QPushButton("Button A");//todo deleteme
+  QPushButton* bbutton = new QPushButton("Button B"); //todo deleteme
   QHBoxLayout* button_layout = new QHBoxLayout;
   button_group->setLayout(button_layout);
-  button_layout->addWidget(abutton);
-  button_layout->addWidget(bbutton);
-  QObject::connect(abutton, SIGNAL(clicked()), this, SLOT(aBttn_event()));
-  QObject::connect(bbutton, SIGNAL(clicked()), this, SLOT(bBttn_event()));
+  button_layout->addWidget(abutton); //DEL
+  button_layout->addWidget(bbutton); //DEL
+  QObject::connect(abutton, SIGNAL(clicked()), this, SLOT(aBttn_event())); //DEL
+  QObject::connect(bbutton, SIGNAL(clicked()), this, SLOT(bBttn_event())); //DEL
 
   customlayout->addWidget(button_group, 0, 0);
   setLayout(customlayout);

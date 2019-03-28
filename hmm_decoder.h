@@ -31,9 +31,10 @@
 //#include "../../../module_help/StAC_rtxi/hmm_tests/hmm_fs.hpp"
 #include "../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.hpp"
 
+//new includes
 #include "../../../module_help/hmmX/hmm/printFuns.hpp"
 #include "../../../module_help/hmmX/hmm/shuttleFuns.hpp"
-//#include "../../../module_help/hmmX/hmm/hmm_vec.hpp"
+#include "../../../module_help/hmmX/hmm/hmm_vec.hpp"
 
 
 class HmmDecoder : public DefaultGUIModel

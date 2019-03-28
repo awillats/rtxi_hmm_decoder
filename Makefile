@@ -4,15 +4,16 @@ PLUGIN_NAME = hmm_decoder
 CFLAGS = -g -Wall -Wextra
 
 HEADERS = hmm_decoder.h\
-          ../../../module_help/StAC_rtxi/hmmFuns.hpp\
-          ../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.hpp
+          ../../../module_help/hmmX/hmm/printFuns.hpp\
+          ../../../module_help/hmmX/hmm/shuttleFuns.hpp\
+          ../../../module_help/hmmX/hmm/hmm_vec.hpp
 
 
 SOURCES = hmm_decoder.cpp\
           moc_hmm_decoder.cpp\
-          ../../../module_help/StAC_rtxi/hmmFuns.cpp\
-          ../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.cpp\
-
+          ../../../module_help/hmmX/hmm/printFuns.cpp\
+          ../../../module_help/hmmX/hmm/shuttleFuns.cpp\
+          ../../../module_help/hmmX/hmm/hmm_vec.cpp
 
 LIBS = 
 

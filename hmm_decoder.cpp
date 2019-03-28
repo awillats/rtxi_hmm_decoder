@@ -100,7 +100,7 @@ HmmDecoder::HmmDecoder(void)
   DefaultGUIModel::createGUI(vars,
                              num_vars); // this is required to create the GUI
   customizeGUI();
- 
+
   initParameters();
   update(INIT); // this is optional, you may place initialization code directly
                 // into the constructor
@@ -120,14 +120,12 @@ HmmDecoder::execute(void)
 {
   //pull from input(0) into buffer
   //decode HMM state in existing buffer
-  
   advanceSpkBuffer(input(0));
-//see if nixing this prevents mem leak
-  decodeSpkBuffer();
+  decodeSpkBuffer(); 
 
-  output(0) = spike_buff.front();
+  output(0) = spike_buff.front(); //i think these are to diagnose / assess
   output(1) = spike_buff.back();
-  output(2) = state_guess_buff.back();
+  output(2) = state_guess_buff.back(); //candidate for decoder lag issue
 
   return;
 }
@@ -150,13 +148,13 @@ HmmDecoder::initParameters(void)
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);
   //vTr.resize(2,0);
-  
+
   spike_buff.resize(bufflen,1);
-  state_guess_buff.resize(bufflen,0);
+  state_guess_buff.resize(bufflen,0); //unnecessary?
 
     vFr = {pfr1, pfr2};
-    vTr = {ptr1, ptr2}; 
-    //printf("\ngogogogo\n"); 
+    vTr = {ptr1, ptr2};
+    //printf("\ngogogogo\n");
 
     restartHMM();
     decodeSpkBuffer();
@@ -165,17 +163,18 @@ HmmDecoder::initParameters(void)
 
 void HmmDecoder::advanceSpkBuffer(int newSpk)
 {
-	
+
 	if (newSpk==99)
 {
-	spike_buff[bufflen-1]=99;	
+	spike_buff[bufflen-1]=99;
 	printStuff();
 }
 else
 {
     //cycle buffer left: http://en.cppreference.com/w/cpp/algorithm/rotate
-  std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
-  spike_buff[bufflen-1]=newSpk;
+   std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
+    spike_buff[bufflen-1]=newSpk;
+      //spike_buff[bufflen]=newSpk; // experimental, feel free to delete
     //spike_buff.push(newSpk); //adds to the end
     //spike_buff.pop();
 }
@@ -184,25 +183,18 @@ else
 
 int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 {
-//printStuff();
-//..printf("\ngogogogo2 %i\n",bufflen);
-
-//printf("bl:");
   int* guessed = viterbi(guess_hmm_, spike_buff, bufflen);
-    //.. printf("\ngogogogo3\n");
     return guessed;
 }
 
 void HmmDecoder::decodeSpkBuffer()
 {
-
-    int* guessed = decodeHMM(guess_hmm);
+    int* guessed = decodeHMM(guess_hmm); //sufficient to cause freeze
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;
 
     delete[] guessed;//this closes seq which is dynamically allocated inside viterbi
-
 }
 
 void HmmDecoder::restartHMM()
@@ -210,7 +202,7 @@ void HmmDecoder::restartHMM()
     //really,and internalize parameter modifications from GUI
     //do I actually want to reset the spike buffer? probably not?
     std::vector<double>PI(2,.5);
-    guess_hmm = HMMv(2,2,vFr,vTr,PI);
+    guess_hmm = HMMv(2,2,vTr,vFr,PI);
     //decodeSpkBuffer();//?
 }
 
@@ -241,13 +233,13 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
      pfr2 = getParameter("FR 2").toDouble()*period_ms;
      ptr1 = getParameter("TR 1").toDouble()*period_ms;
      ptr2 = getParameter("TR 2").toDouble()*period_ms;
-     
-      vFr = {pfr1, pfr2};  
+
+      vFr = {pfr1, pfr2};
       vTr = {ptr1, ptr2};
       restartHMM();
-     
-     
-     
+
+
+
 	//decodeSpkBuffer();
       break;
 
@@ -273,14 +265,14 @@ HmmDecoder::customizeGUI(void)
 
   QGroupBox* button_group = new QGroupBox;
 
-  QPushButton* abutton = new QPushButton("Button A");
-  QPushButton* bbutton = new QPushButton("Button B");
+  QPushButton* abutton = new QPushButton("Button A");//todo deleteme
+  QPushButton* bbutton = new QPushButton("Button B"); //todo deleteme
   QHBoxLayout* button_layout = new QHBoxLayout;
   button_group->setLayout(button_layout);
-  button_layout->addWidget(abutton);
-  button_layout->addWidget(bbutton);
-  QObject::connect(abutton, SIGNAL(clicked()), this, SLOT(aBttn_event()));
-  QObject::connect(bbutton, SIGNAL(clicked()), this, SLOT(bBttn_event()));
+  button_layout->addWidget(abutton); //DEL
+  button_layout->addWidget(bbutton); //DEL
+  QObject::connect(abutton, SIGNAL(clicked()), this, SLOT(aBttn_event())); //DEL
+  QObject::connect(bbutton, SIGNAL(clicked()), this, SLOT(bBttn_event())); //DEL
 
   customlayout->addWidget(button_group, 0, 0);
   setLayout(customlayout);
@@ -294,7 +286,7 @@ printf("\n\n decoder;spike_buff=[");
   {
        printf("%d,",spike_buff[i]);
   }
-	
+
 printf("];\nstate_guess=[");
   for (int i=0; i<bufflen; i++)
   {

@@ -27,9 +27,12 @@
 #include <algorithm>
 //#include <rtdk.h>
 
-#include "../../../module_help/StAC_rtxi/hmmFuns.hpp"
-//#include "../../../module_help/StAC_rtxi/hmm_tests/hmm_fs.hpp"
-#include "../../../module_help/StAC_rtxi/hmm_tests/hmm_vec.hpp"
+//new includes
+#include "../../../module_help/hmmX/hmm/printFuns.hpp"
+#include "../../../module_help/hmmX/hmm/shuttleFuns.hpp"
+#include "../../../module_help/hmmX/hmm/hmm_vec.hpp"
+
+
 class HmmDecoder : public DefaultGUIModel
 {
 
@@ -38,8 +41,6 @@ class HmmDecoder : public DefaultGUIModel
 public:
   HmmDecoder(void);
   virtual ~HmmDecoder(void);
-
-
 
   void execute(void);
   void createGUI(DefaultGUIModel::variable_t*, int);

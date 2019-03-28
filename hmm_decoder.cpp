@@ -128,7 +128,7 @@ HmmDecoder::execute(void)
 
   output(0) = spike_buff.front();
   output(1) = spike_buff.back();
-  output(2) = state_guess_buff.back();
+  output(2) = state_guess_buff.back(); //candidate for decoder lag issue
 
   return;
 }
@@ -153,7 +153,7 @@ HmmDecoder::initParameters(void)
   //vTr.resize(2,0);
 
   spike_buff.resize(bufflen,1);
-  state_guess_buff.resize(bufflen,0);
+  state_guess_buff.resize(bufflen,0); //unnecessary?
 
     vFr = {pfr1, pfr2};
     vTr = {ptr1, ptr2};
@@ -202,13 +202,13 @@ void HmmDecoder::decodeSpkBuffer()
 //disabled to isolate bad code!
 
     int* guessed = decodeHMM(guess_hmm); //sufficient to cause freeze
-    /*
+    
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;
 
     delete[] guessed;//this closes seq which is dynamically allocated inside viterbi
-*/
+
 }
 
 void HmmDecoder::restartHMM()
@@ -216,7 +216,8 @@ void HmmDecoder::restartHMM()
     //really,and internalize parameter modifications from GUI
     //do I actually want to reset the spike buffer? probably not?
     std::vector<double>PI(2,.5);
-    guess_hmm = HMMv(2,2,vFr,vTr,PI);
+    guess_hmm = HMMv(2,2,vTr,vFr,PI);
+    
     //decodeSpkBuffer();//?
 }
 

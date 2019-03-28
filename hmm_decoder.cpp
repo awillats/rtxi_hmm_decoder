@@ -146,7 +146,7 @@ HmmDecoder::initParameters(void)
   ptr2=2e-4;
 
   buffi = 0;
-  bufflen = 3000;//holy cow
+  bufflen = 300;//holy cow
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);
@@ -201,8 +201,7 @@ void HmmDecoder::decodeSpkBuffer()
 {
 //disabled to isolate bad code!
 
-    int* guessed = decodeHMM(guess_hmm);
-
+    int* guessed = decodeHMM(guess_hmm); //sufficient to cause freeze
     /*
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);

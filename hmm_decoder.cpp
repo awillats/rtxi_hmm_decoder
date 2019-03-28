@@ -100,7 +100,7 @@ HmmDecoder::HmmDecoder(void)
   DefaultGUIModel::createGUI(vars,
                              num_vars); // this is required to create the GUI
   customizeGUI();
- 
+
   initParameters();
   update(INIT); // this is optional, you may place initialization code directly
                 // into the constructor
@@ -120,10 +120,10 @@ HmmDecoder::execute(void)
 {
   //pull from input(0) into buffer
   //decode HMM state in existing buffer
-  
+
   advanceSpkBuffer(input(0));
 //see if nixing this prevents mem leak
-  decodeSpkBuffer();
+  //decodeSpkBuffer(); //RECENT CHANGE, undo if still broken
 
   output(0) = spike_buff.front();
   output(1) = spike_buff.back();
@@ -150,13 +150,13 @@ HmmDecoder::initParameters(void)
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);
   //vTr.resize(2,0);
-  
+
   spike_buff.resize(bufflen,1);
   state_guess_buff.resize(bufflen,0);
 
     vFr = {pfr1, pfr2};
-    vTr = {ptr1, ptr2}; 
-    //printf("\ngogogogo\n"); 
+    vTr = {ptr1, ptr2};
+    //printf("\ngogogogo\n");
 
     restartHMM();
     decodeSpkBuffer();
@@ -165,10 +165,10 @@ HmmDecoder::initParameters(void)
 
 void HmmDecoder::advanceSpkBuffer(int newSpk)
 {
-	
+
 	if (newSpk==99)
 {
-	spike_buff[bufflen-1]=99;	
+	spike_buff[bufflen-1]=99;
 	printStuff();
 }
 else
@@ -241,13 +241,13 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
      pfr2 = getParameter("FR 2").toDouble()*period_ms;
      ptr1 = getParameter("TR 1").toDouble()*period_ms;
      ptr2 = getParameter("TR 2").toDouble()*period_ms;
-     
-      vFr = {pfr1, pfr2};  
+
+      vFr = {pfr1, pfr2};
       vTr = {ptr1, ptr2};
       restartHMM();
-     
-     
-     
+
+
+
 	//decodeSpkBuffer();
       break;
 
@@ -294,7 +294,7 @@ printf("\n\n decoder;spike_buff=[");
   {
        printf("%d,",spike_buff[i]);
   }
-	
+
 printf("];\nstate_guess=[");
   for (int i=0; i<bufflen; i++)
   {

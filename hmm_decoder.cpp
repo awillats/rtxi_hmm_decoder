@@ -128,7 +128,7 @@ HmmDecoder::execute(void)
 
   output(0) = spike_buff.front();
   output(1) = spike_buff.back();
-  output(2) = state_guess_buff.back(); //candidate for decoder lag issue
+  output(2) = state_guess_buff.front(); //candidate for decoder lag issue
 
   return;
 }
@@ -146,7 +146,7 @@ HmmDecoder::initParameters(void)
   ptr2=2e-4;
 
   buffi = 0;
-  bufflen = 300;//holy cow
+  bufflen = 3000;//holy cow
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);
@@ -175,8 +175,8 @@ void HmmDecoder::advanceSpkBuffer(int newSpk)
 else
 {
     //cycle buffer left: http://en.cppreference.com/w/cpp/algorithm/rotate
-  std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
-  spike_buff[bufflen-1]=newSpk;
+   std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
+    spike_buff[bufflen-1]=newSpk;
     //spike_buff.push(newSpk); //adds to the end
     //spike_buff.pop();
 }

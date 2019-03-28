@@ -200,8 +200,10 @@ int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 void HmmDecoder::decodeSpkBuffer()
 {
 //disabled to isolate bad code!
-/*
+
     int* guessed = decodeHMM(guess_hmm);
+
+    /*
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;

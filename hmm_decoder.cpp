@@ -120,15 +120,12 @@ HmmDecoder::execute(void)
 {
   //pull from input(0) into buffer
   //decode HMM state in existing buffer
-
   advanceSpkBuffer(input(0));
-//see if nixing this prevents mem leak
-  decodeSpkBuffer(); //RECENT CHANGE, undo if still broken
-  //commenting decodeSpkBuffer is sufficient to allow the decoder module to run
+  decodeSpkBuffer(); 
 
-  output(0) = spike_buff.front();
+  output(0) = spike_buff.front(); //i think these are to diagnose / assess
   output(1) = spike_buff.back();
-  output(2) = state_guess_buff.front(); //candidate for decoder lag issue
+  output(2) = state_guess_buff.back(); //candidate for decoder lag issue
 
   return;
 }
@@ -177,6 +174,7 @@ else
     //cycle buffer left: http://en.cppreference.com/w/cpp/algorithm/rotate
    std::rotate(spike_buff.begin(), spike_buff.begin() + 1, spike_buff.end());
     spike_buff[bufflen-1]=newSpk;
+      //spike_buff[bufflen]=newSpk; // experimental, feel free to delete
     //spike_buff.push(newSpk); //adds to the end
     //spike_buff.pop();
 }
@@ -185,30 +183,18 @@ else
 
 int* HmmDecoder::decodeHMM(HMMv guess_hmm_)
 {
-//printStuff();
-//..printf("\ngogogogo2 %i\n",bufflen);
-
-
-//    int* vguess = viterbi(myHMM, myHMM.spikes, nt);
-
-//printf("bl:");
   int* guessed = viterbi(guess_hmm_, spike_buff, bufflen);
-    //.. printf("\ngogogogo3\n");
     return guessed;
 }
 
 void HmmDecoder::decodeSpkBuffer()
 {
-//disabled to isolate bad code!
-
     int* guessed = decodeHMM(guess_hmm); //sufficient to cause freeze
-    
     //NB: no idea why this temporary vector is necessary. should be able to replace this with one line...
     std::vector<int> temp_vec(guessed,guessed+bufflen);
     state_guess_buff = temp_vec;
 
     delete[] guessed;//this closes seq which is dynamically allocated inside viterbi
-
 }
 
 void HmmDecoder::restartHMM()
@@ -217,7 +203,6 @@ void HmmDecoder::restartHMM()
     //do I actually want to reset the spike buffer? probably not?
     std::vector<double>PI(2,.5);
     guess_hmm = HMMv(2,2,vTr,vFr,PI);
-    
     //decodeSpkBuffer();//?
 }
 

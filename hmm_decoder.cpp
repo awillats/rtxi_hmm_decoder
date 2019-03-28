@@ -22,8 +22,14 @@
  */
 
 
-//printing vector options https://stackoverflow.com/questions/10750057/how-to-print-out-the-contents-of-a-vector
+/* to do: active @ march 2019
+* take inspiration for how hmm_generator handles decoding
+*
+*
+*/
 
+
+//printing vector options https://stackoverflow.com/questions/10750057/how-to-print-out-the-contents-of-a-vector
 
 //vector printing code
 /*
@@ -146,7 +152,7 @@ HmmDecoder::initParameters(void)
   ptr2=2e-4;
 
   buffi = 0;
-  bufflen = 300;//holy cow
+  bufflen = 300;//lowering this to 300 is insufficient to prevent freezing  //holy cow
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);

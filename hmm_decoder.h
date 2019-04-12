@@ -56,15 +56,24 @@ private:
   double some_state;
   double period;
   double period_ms;
+  int nstates;
+  int nevents;
+  
 
 //--- HMM guess params
   double pfr1;
   double pfr2;
+  
+  double pfr3;
+  double pfr4; //turns these into a vector double
+  
   double ptr1;
   double ptr2;
 
+    std::vector<std::vector<double>> trs;
+    std::vector<std::vector<double>> frs;
   std::vector<double> vFr;
-  std::vector<double> vTr;
+    std::vector<double> vTr;
 
   //NB: this seems like bad coding form...
   HMMv guess_hmm = HMMv();
@@ -75,6 +84,7 @@ private:
   std::vector<int> spike_buff;
   std::vector<int> state_guess_buff;
 
+  void buildBigHMM();
   void initParameters();
   void advanceSpkBuffer(int);
   void decodeSpkBuffer();

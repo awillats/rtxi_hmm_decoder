@@ -135,6 +135,8 @@ void HmmDecoder::buildBigHMM()
 {
     vFr = {pfr1, pfr2};
     vTr = {ptr1, ptr2};
+    trs=vTr;
+    frs=vFr;
 
 	
 /*

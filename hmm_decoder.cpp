@@ -133,6 +133,11 @@ HmmDecoder::execute(void)
 
 void HmmDecoder::buildBigHMM()
 {
+    vFr = {pfr1, pfr2};
+    vTr = {ptr1, ptr2};
+
+	
+/*
     double ptr1_ = (1.0-(ptr1*(nstates-1)));
     double ptr2_ = (1.0-(ptr2*(nstates-1)));
     
@@ -141,6 +146,7 @@ void HmmDecoder::buildBigHMM()
     
     trs = {{ptr1_, ptr1,ptr1}, {ptr1,ptr1_,ptr1}, {ptr1,ptr1,ptr1_}};
     frs = {{pfr1,pfr1_,pfr1_}, {pfr2_,pfr2,pfr2_}, {pfr1_,pfr1_,pfr1}};
+*/
     //   =  {             .9  }
    // trs = {{ptr1_, ptr1},{ptr1,ptr1_}};
     //frs = {{20,1,1}, {1,1,20}};
@@ -159,10 +165,10 @@ HmmDecoder::initParameters(void)
   ptr1=2e-4;
   ptr2=2e-4;
   */
-  nstates=3;
-  nevents=3;
-  pfr1=1-1e-2;//1e-3;
-    pfr2=.7;//20e-3
+  nstates=2;
+  nevents=2;
+  pfr1=1e-3;//1-1e-2;//
+    pfr2=20e-3;//.7;//
    
     ptr1=4e-4;
     ptr2=4e-4;

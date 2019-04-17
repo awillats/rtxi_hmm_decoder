@@ -57,14 +57,6 @@ static DefaultGUIModel::variable_t vars[] = {
     DefaultGUIModel::INPUT,
   },
   {
-    "dec out", "?",
-    DefaultGUIModel::OUTPUT,
-  },
-  {
-    "size out", "?",
-    DefaultGUIModel::OUTPUT,
-  },
-  {
     "state out", "?",
     DefaultGUIModel::OUTPUT,
   },
@@ -123,9 +115,7 @@ HmmDecoder::execute(void)
   advanceSpkBuffer(input(0));
   decodeSpkBuffer(); 
 
-  output(0) = spike_buff.front(); //i think these are to diagnose / assess
-  output(1) = spike_buff.back();
-  output(2) = state_guess_buff.back(); //candidate for decoder lag issue
+  output(0) = state_guess_buff.back(); //candidate for decoder lag issue
 
   return;
 }
@@ -177,7 +167,7 @@ HmmDecoder::initParameters(void)
 
 
   buffi = 0;
-  bufflen = 300;//  3000//holy cow
+  bufflen = 300;//300default///  3000//holy cow
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);

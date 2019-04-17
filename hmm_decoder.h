@@ -70,8 +70,10 @@ private:
   double ptr1;
   double ptr2;
 
-    std::vector<std::vector<double>> trs;
-    std::vector<std::vector<double>> frs;
+std::vector<double> trs;
+std::vector<double> frs;
+    //std::vector<std::vector<double>> trs;
+    //std::vector<std::vector<double>> frs;
   std::vector<double> vFr;
     std::vector<double> vTr;
 

@@ -57,14 +57,6 @@ static DefaultGUIModel::variable_t vars[] = {
     DefaultGUIModel::INPUT,
   },
   {
-    "dec out", "?",
-    DefaultGUIModel::OUTPUT,
-  },
-  {
-    "size out", "?",
-    DefaultGUIModel::OUTPUT,
-  },
-  {
     "state out", "?",
     DefaultGUIModel::OUTPUT,
   },
@@ -123,9 +115,7 @@ HmmDecoder::execute(void)
   advanceSpkBuffer(input(0));
   decodeSpkBuffer(); 
 
-  output(0) = spike_buff.front(); //i think these are to diagnose / assess
-  output(1) = spike_buff.back();
-  output(2) = state_guess_buff.back(); //candidate for decoder lag issue
+  output(0) = state_guess_buff.back(); //candidate for decoder lag issue
 
   return;
 }
@@ -133,6 +123,13 @@ HmmDecoder::execute(void)
 
 void HmmDecoder::buildBigHMM()
 {
+    vFr = {pfr1, pfr2};
+    vTr = {ptr1, ptr2};
+    trs=vTr;
+    frs=vFr;
+
+	
+/*
     double ptr1_ = (1.0-(ptr1*(nstates-1)));
     double ptr2_ = (1.0-(ptr2*(nstates-1)));
     
@@ -141,6 +138,7 @@ void HmmDecoder::buildBigHMM()
     
     trs = {{ptr1_, ptr1,ptr1}, {ptr1,ptr1_,ptr1}, {ptr1,ptr1,ptr1_}};
     frs = {{pfr1,pfr1_,pfr1_}, {pfr2_,pfr2,pfr2_}, {pfr1_,pfr1_,pfr1}};
+*/
     //   =  {             .9  }
    // trs = {{ptr1_, ptr1},{ptr1,ptr1_}};
     //frs = {{20,1,1}, {1,1,20}};
@@ -159,17 +157,17 @@ HmmDecoder::initParameters(void)
   ptr1=2e-4;
   ptr2=2e-4;
   */
-  nstates=3;
-  nevents=3;
-  pfr1=1-1e-2;//1e-3;
-    pfr2=.7;//20e-3
+  nstates=2;
+  nevents=2;
+  pfr1=1e-3;//1-1e-2;//
+    pfr2=20e-3;//.7;//
    
     ptr1=4e-4;
     ptr2=4e-4;
 
 
   buffi = 0;
-  bufflen = 300;//  3000//holy cow
+  bufflen = 300;//300default///  3000//holy cow
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);

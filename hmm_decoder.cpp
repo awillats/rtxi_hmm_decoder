@@ -167,7 +167,7 @@ HmmDecoder::initParameters(void)
 
 
   buffi = 0;
-  bufflen = 300;//300default///  3000//holy cow
+  bufflen = 1e3;//300;#default///  3000//
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);

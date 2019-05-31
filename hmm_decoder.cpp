@@ -115,7 +115,8 @@ HmmDecoder::execute(void)
   advanceSpkBuffer(input(0));
   decodeSpkBuffer(); 
 
-  output(0) = state_guess_buff.back(); //candidate for decoder lag issue
+  output(0) = state_guess_buff.back()-1; //candidate for decoder lag issue
+	//-1 is for 0 indexing convention
 
   return;
 }

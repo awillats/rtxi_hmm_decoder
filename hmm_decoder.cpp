@@ -115,7 +115,9 @@ HmmDecoder::execute(void)
   advanceSpkBuffer(input(0));
   decodeSpkBuffer(); 
 
-  output(0) = state_guess_buff.back()-1; //candidate for decoder lag issue
+  //very convoluted. must fix!
+  output(0) = state_guess_buff.back();
+  //output(0) = ((state_guess_buff.back()<1) ? 0 : 1); //candidate for decoder lag issue
 	//-1 is for 0 indexing convention
 
   return;
@@ -183,6 +185,10 @@ HmmDecoder::initParameters(void)
     buildBigHMM();
     restartHMM();
     decodeSpkBuffer();
+
+    std::cout<<"Decoder!:";
+
+	guess_hmm.printMyParams();	
 }
 
 

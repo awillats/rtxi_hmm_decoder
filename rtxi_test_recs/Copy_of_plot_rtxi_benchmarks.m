@@ -45,6 +45,8 @@ base_time = 1e-9;
 time_unit = 'ms'; time_conv = base_time/1e-3;
 %time_unit = '\mus'; time_conv = base_time/1e-6; 
 
+comp_time_idx=4;
+
 
 colors = lines(length(DD));
 
@@ -55,7 +57,7 @@ hold on
 i=1
 
 D = DD{i};
-dy = (D(4,:)*time_conv);
+dy = (D(comp_time_idx,:)*time_conv);
 x = bufflen(i);
 h1=plot(x, dy(1),'k.');
 h2=plot(x,(mean(dy)),'o','Color',colors(i,:),'MarkerSize',15,'LineWidth',2);
@@ -64,7 +66,7 @@ h3=plot(x,max(dy),'x','Color',colors(i,:),'MarkerSize',15);
 
 for i = 1:length(DD)
     D = DD{i};
-    dy = (D(4,:)*time_conv);
+    dy = (D(comp_time_idx,:)*time_conv);
     x = bufflen(i);
      plot(x, dy(1:5e2),'k.','HandleVisibility','off');
     plot(x,(mean(dy)),'o','Color',colors(i,:),'MarkerSize',15,'LineWidth',2,'HandleVisibility','off');
@@ -95,7 +97,7 @@ title(work_loc)
 for i=1:nD
     subplot(nD,1,i)
     D = DD{i};
-    dy = (D(4,:)*time_conv);
+    dy = (D(comp_time_idx,:)*time_conv);
     
     ti = [1:1e4];%length(dy)];
     

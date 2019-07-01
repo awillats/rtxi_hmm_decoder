@@ -34,8 +34,8 @@ xlens = [2,3,4,5,6,7,8];
 bufflen = [100,300,1000,2000];
 modifier = {'','_reboot'};
 
-%{
 
+%{
 D1 = readFun(2,100);
 D2 = readFun2(2,300);
 D3 = readFun(2,1000);
@@ -46,6 +46,9 @@ sweep_str = 'buffer length';
 
 YL1 = 10.^[-1.5,0.5]
 YL2= 10.^[-1.5,0.5];
+
+YL1=10.^[-2.5,1];
+YL2=YL1;
 
 %}
 
@@ -59,9 +62,9 @@ sweep_str = 'size(X-LDS)'
 
 
 
-%YL1= 10.^[-.5,-.15];
+YL1= [.42, .51];%10.^[-.4,-.2];%10.^[-2.5,1];
 YL2= 10.^[-.5,0.5];
-YL1=YL2;
+%YL1=YL2;
 %{
 %}
 
@@ -111,11 +114,19 @@ for i = 1:length(DD)
 end
 
 plot([min(sweep_vec)/2,max(sweep_vec)*2],[1,1],'k--','LineWidth',1);
-set(gca,'XScale','log','Yscale','log')
+
+if strcmp(sweep_str,'size(X-LDS)')
+    set(gca,'Yscale','log','XTick',xlens)
+    xlim([1,10])
+
+else
+    set(gca,'Yscale','log','XScale','log')
+
+end
 %ylim([1e-3,10^1.5])
 ylim(YL1)
 
-set(gcf,'Position',[   262   471   359   332]);
+set(gcf,'Position',[    624   252   355   260]);
 
 
 legend('data','mean','max','1ms RT period','Location','southeast')

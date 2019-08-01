@@ -20,6 +20,7 @@ channelKey = {'plant.x',...
     
 
 DD = {};
+xlens = 2:8
 for i=xlens
     DD{end+1} = readFun(i,1000);
 end

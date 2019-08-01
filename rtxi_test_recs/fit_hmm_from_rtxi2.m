@@ -53,7 +53,7 @@ dt_Decode = 1e-3;
 cFactor = dt_ID / dt_Decode; %20?
 
 
-spkc = compressSpks(spks_clipped,10);%cFactor
+spkc = compressSpks(spks_clipped,20*cFactor);%cFactor
 
 
 %commented section is for fitting from 
@@ -75,6 +75,6 @@ hold on
 plot(spkc,'k','LineWidth',1)
 plot(q_guess-.8,'g','LineWidth',2)
 plot(qp_guess(2,:),'m','LineWidth',2)
-xlim([0,1e4])
+xlim([0,1e4]+1e4)
 
 hold off

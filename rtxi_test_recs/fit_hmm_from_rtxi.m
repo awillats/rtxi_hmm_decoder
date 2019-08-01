@@ -48,17 +48,30 @@ Eo(1,:) = [1-pfr, pfr];
 Eo(2,:) = [1-pfr2, pfr2];
 
 
+dt_ID = 1e-3;
+dt_Decode = 1e-3;
+cFactor = dt_ID / dt_Decode; %20?
+
+spkc = compressSpks(spks,cFactor);
+
+
+%commented section is for fitting from 
+%{ 
 [Te,Ee] = hmmtrain(spks+1,To,Eo);
 qp_guess = hmmdecode(spks+1,Te,Ee);
 q_guess = hmmviterbi(spks+1,Te,Ee);
+%}
 
+[Te,Ee] = hmmtrain(spkc+1,To,Eo);
+qp_guess = hmmdecode(spkc+1,Te,Ee);
+q_guess = hmmviterbi(spkc+1,Te,Ee);
 %
 
 
 figure(1)
 clf
 hold on
-plot(spks)
+plot(spkc)
 plot(qp_guess(2,:),'k','LineWidth',1)
 plot(q_guess-.8,'g','LineWidth',2)
 hold off

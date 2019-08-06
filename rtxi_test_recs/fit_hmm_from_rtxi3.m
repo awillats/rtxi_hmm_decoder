@@ -11,13 +11,13 @@ set(0,'DefaultAxesFontSize',15)
 %average FR usually 5-10 spks/s
 
 basePath='~/Documents/Research/Data/rtxi_spike_mb/';
-endPath = 'testing123_take2';channelID = 5;
+%endPath = 'testing123_take2';channelID = 5; overTransition=true;
 
-
-%endPath = 'OP1_3715_b3_CL1';channelID = 7;
+endPath = 'OP1_3715_b3_CL1';channelID = 7; overTransition=false;
 
 %no compression + viterbi training works!, OR
 %5x compression + BW training
+
 
 doSubsample = true;
 clipLength = -1;%3e4;% (set to -1 to not clip)
@@ -45,13 +45,12 @@ else
     spks=D(channelID,:);
 end
 %states=D(6,:);
-
 %plot(D(channelID,:),'r','LineWidth',2);
 %return
 
 %%
 
-cMod = 100;
+cMod = 5;
 
 %ad-hoc way to map 0-.5-1 data to 0-1
 spks_clipped = double(spks>.4);
@@ -61,6 +60,11 @@ if doSubsample
     spks_clipped(1:2:end) = 0; 
 end
 
+dt_ID = 1e-3;
+dt_Decode = (1e-3)/cMod;
+cFactor = floor(dt_ID / dt_Decode); %20?
+
+spkc = compressSpks(spks_clipped,cFactor);%cFactor
 
 figure(1)
 clf
@@ -70,20 +74,39 @@ xlim([0,5e5])
 % guess params
 n_states = 2;
 
-%ptr0 = (1e-3)*10;
-%pfr = (1e-6);
-%pfr2 = (1e-3);
+pmu = mean(spkc)
 
 
-% MB prior
-ptr0 = 5e-4;%1e-2;
-pfr = (5e-3/10);
-pfr2= 5e-2/10;
-
-%pfr = 0.05;
-%pfr2 = 0.1;
+%%
 
 
+fRatio = 2;
+
+%set firing rates by geometric mean
+f1 = sqrt(pmu^2 / fRatio)
+f2 = fRatio*f1
+pfr = f1;
+pfr2 = f2;
+
+%
+%{
+%set firing rates by arithmetic mean
+fRatio = 6;
+fsum = 1+fRatio;
+f1 = (2*fRatio)/fsum;
+f2 = 2/fsum;
+pfr = pmu*f1;
+pfr2 = pmu*f2;
+%}
+
+%%
+
+%for "bad" datasets, set transition probability very high
+if overTransition
+    ptr0  = pmu*10; %this is a hack
+else
+    ptr0 =  pmu/10;
+end
 EYE = eye(n_states);
 
 To = (1-EYE)*ptr0 + EYE*(1-ptr0*(n_states-1));
@@ -92,12 +115,7 @@ Eo(1,:) = [1-pfr, pfr];
 Eo(2,:) = [1-pfr2, pfr2];
 
 
-dt_ID = 1e-3;
-dt_Decode = 1e-3;
-cFactor = dt_ID / dt_Decode; %20?
-
-
-spkc = compressSpks(spks_clipped,cMod*cFactor);%cFactor
+sprintf('Guess: FR1 = %.3f/sec,  FR2 = %.3f/sec , TR1 = %.3f/sec ,  TR2 = %.3f/sec', Eo(1,2)*1e3/cMod, Eo(2,2)*1e3/cMod, To(1,2)*1e3/cMod, To(2,1)*1e3/cMod)
 
 tic
 [Te,Ee] = hmmtrain(spkc+1,To,Eo);
@@ -105,7 +123,10 @@ qp_guess = hmmdecode(spkc+1,Te,Ee);
 q_guess = hmmviterbi(spkc+1,Te,Ee);
 toc
 %
+
+
 %%
+sprintf('FR1 = %.3f/sec,  FR2 = %.3f/sec , TR1 = %.3f/sec ,  TR2 = %.3f/sec', Ee(1,2)*1e3/cMod, Ee(2,2)*1e3/cMod, Te(1,2)*1e3/cMod, Te(2,1)*1e3/cMod)
 
 figure(1)
 clf
@@ -117,4 +138,12 @@ plot(q_guess-.8,'g','LineWidth',2)
 
 hold off
 set(gcf,'Position',[          64         225        1349         188]);
+return
+%%
 
+[Tee,Eee] = hmmestimate(spkc+1, q_guess);
+q_guess2 = hmmviterbi(spkc+1,Tee,Eee);
+figure(1)
+hold on
+plot(q_guess2-.7,'c:','LineWidth',2)
+hold off

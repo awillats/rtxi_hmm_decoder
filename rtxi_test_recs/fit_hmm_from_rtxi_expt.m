@@ -10,7 +10,7 @@ set(0,'DefaultAxesFontSize',15)
 %%
 %average FR usually 5-10 spks/s
 
-basePath='~/Documents/Research/Data/rtxi_spike_mb/';
+basePath='~/Documents/Research/Data/rtxi_spike_mb/aug5_2019/';
 %endPath = 'testing123_take2';channelID = 5; overTransition=true;
 
 endPath = 'OP1_2935_C2_nW_hmmTrain';channelID = 7; stateID=9; overTransition=false;

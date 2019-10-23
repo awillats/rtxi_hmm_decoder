@@ -1,6 +1,6 @@
 PLUGIN_NAME = hmm_decoder
 
-HOME_DIR=/home/stanleyrtxi/CodeRepository/adam_RTXI
+HOME_DIR=$(HOME)/RTXI/
 HELP_DIR=$(HOME_DIR)/module_help
 HMM_DIR=$(HELP_DIR)/hmmX/hmm
 

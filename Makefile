@@ -1,6 +1,8 @@
 PLUGIN_NAME = hmm_decoder
 
-HMM_DIR=/home/adam/RTXI/module_help/hmmX/hmm
+HOME_DIR=/home/stanleyrtxi/CodeRepository/adam_RTXI
+HELP_DIR=$(HOME_DIR)/module_help
+HMM_DIR=$(HELP_DIR)/hmmX/hmm
 
 #gflag is to enable better debugging
 CFLAGS = -g -Wall -Wextra -I/home/adam/RTXI/module_help/hmmX/hmm

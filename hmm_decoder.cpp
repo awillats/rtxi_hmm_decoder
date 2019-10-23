@@ -86,7 +86,7 @@ static DefaultGUIModel::variable_t vars[] = {
 static size_t num_vars = sizeof(vars) / sizeof(DefaultGUIModel::variable_t);
 
 HmmDecoder::HmmDecoder(void)
-  : DefaultGUIModel("HmmDecoder with Custom GUI", ::vars, ::num_vars)
+  : DefaultGUIModel("HmmDecoder with Custom GUI", ::vars, ::num_vars), spike_current(0.0), doSample(false)
 {
   setWhatsThis("<p><b>HmmDecoder:</b><br>QWhatsThis description.</p>");
   DefaultGUIModel::createGUI(vars,
@@ -110,10 +110,15 @@ HmmDecoder::~HmmDecoder(void)
 void
 HmmDecoder::execute(void)
 {
+  // TODO: temporary fudge.
+  if (doSample) {spike_current=ceil(2*input(0));}
+  else {spike_current=0.0;}
+  doSample = !doSample;
+
   //pull from input(0) into buffer
   //decode HMM state in existing buffer
-  advanceSpkBuffer(input(0));
-  decodeSpkBuffer(); 
+  advanceSpkBuffer(spike_current);
+  decodeSpkBuffer();
 
   //very convoluted. must fix!
   output(0) = state_guess_buff.back();
@@ -131,14 +136,14 @@ void HmmDecoder::buildBigHMM()
     trs=vTr;
     frs=vFr;
 
-	
+
 /*
     double ptr1_ = (1.0-(ptr1*(nstates-1)));
     double ptr2_ = (1.0-(ptr2*(nstates-1)));
-    
+
     double pfr1_ = (1.0-pfr1)/(nevents-1);
     double pfr2_ = (1.0-pfr2)/(nevents-1);
-    
+
     trs = {{ptr1_, ptr1,ptr1}, {ptr1,ptr1_,ptr1}, {ptr1,ptr1,ptr1_}};
     frs = {{pfr1,pfr1_,pfr1_}, {pfr2_,pfr2,pfr2_}, {pfr1_,pfr1_,pfr1}};
 */
@@ -164,13 +169,13 @@ HmmDecoder::initParameters(void)
   nevents=2;
   pfr1=1e-3;//1-1e-2;//
     pfr2=20e-3;//.7;//
-   
+
     ptr1=4e-4;
     ptr2=4e-4;
 
 
   buffi = 0;
-  bufflen = 1e3;//300;#default///  3000//
+  bufflen = 1e3;//300;#default///  3000 is dangerous is tdt room...//
 
   // [BugFixed] I was tempted to use vector initialization code here, but it was overriding the scope of the vector!
   //vFr.resize(2,0);
@@ -188,7 +193,8 @@ HmmDecoder::initParameters(void)
 
     std::cout<<"Decoder!:";
 
-	guess_hmm.printMyParams();	
+	guess_hmm.printMyParams();
+	std::cout<<"bufflen{"<<bufflen<<"}";
 }
 
 
@@ -233,7 +239,7 @@ void HmmDecoder::restartHMM()
     //really,and internalize parameter modifications from GUI
     //do I actually want to reset the spike buffer? probably not?
     std::vector<double>PI(nstates,.5);
-    
+
 
     guess_hmm = HMMv(nstates,nevents,trs,frs,PI);
     //decodeSpkBuffer();//?
@@ -269,7 +275,7 @@ HmmDecoder::update(DefaultGUIModel::update_flags_t flag)
 
       vFr = {pfr1, pfr2};
       vTr = {ptr1, ptr2};
-      
+
       restartHMM();
 
 

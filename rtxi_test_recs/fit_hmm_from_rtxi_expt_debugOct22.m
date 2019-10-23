@@ -18,6 +18,10 @@ basePath='~/Documents/Research/Data/rtxi_spike_mb/aug5_2019/';
 endPath = 'OP1_2935_C2_nW_hmmTrain';channelID = 7; stateID=9; overTransition=false;
 %endPath = 'OP1_2935_C2_nW_hmmTest';channelID = 7; stateID=9; overTransition=false;
 
+% toggles whetherto perform an additional sweep to anticipate buffered
+% decoding performance
+simBuffLoop=true;%false; %should be false by default
+
 
 %no compression + viterbi training works!, OR
 %5x compression + BW training
@@ -58,6 +62,7 @@ end
 %return
 
 %%
+
 cMod = 1; %1 is default, 2,5,10 are also good
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
@@ -126,12 +131,7 @@ Eo(1,:) = [1-pfr, pfr];
 Eo(2,:) = [1-pfr2, pfr2];
 
 
-fr1 = Eo(1,2)*1e3/cMod;
-fr2 =  Eo(2,2)*1e3/cMod;
-tr1 = To(1,2)*1e3/cMod;
-tr2 = To(2,1)*1e3/cMod;
-
-sprintf('Guess: FR1 = %.3f/sec,  FR2 = %.3f/sec , TR1 = %.3f/sec ,  TR2 = %.3f/sec', fr1, fr2, tr1, tr2)
+sprintf('Guess: FR1 = %.3f/sec,  FR2 = %.3f/sec , TR1 = %.3f/sec ,  TR2 = %.3f/sec', Eo(1,2)*1e3/cMod, Eo(2,2)*1e3/cMod, To(1,2)*1e3/cMod, To(2,1)*1e3/cMod)
 
 tic
 [Te,Ee] = hmmtrain(spkc+1,To,Eo);
@@ -139,6 +139,28 @@ qp_guess = hmmdecode(spkc+1,Te,Ee);
 q_guess = hmmviterbi(spkc+1,Te,Ee);
 toc
 %
+
+
+%%
+figure(1)
+clf
+hold on
+plot(spkc,'k','LineWidth',1)
+plot(q_guess-.8,'g','LineWidth',2)
+
+%% this section hacked together to try to replicate the buffered decoding of RTXI
+q_guess_looped = 0*q_guess;
+buffLen=1e3;
+
+q_guess_looped(1:buffLen)=hmmviterbi(spkc(1:buffLen)+1,Te,Ee);
+
+if simBuffLoop
+    for i = 1:(length(spkc)-(buffLen))
+        q_guess_buffer = hmmviterbi(spkc(i:i+buffLen)+1,Te,Ee);
+        q_guess_looped(i+buffLen)=q_guess_buffer(end);%1: leads to overly spiky estimates, end: leads tolagged estimates?
+        %q_guess_looped(i+buffLen)=mean(q_guess_buffer);%policy that leads to better sampling along buffer?
+    end
+end
 %%
 
 figure(1)
@@ -147,13 +169,18 @@ hold on
 plot(spkc,'k','LineWidth',1)
 plot(q_guess-.8,'g','LineWidth',2)
 
-%plot(D(stateID,:)-.9+1,'m','LineWidth',3)%%plots online-decoded state
-
+if var(D(stateID,:)~=0)
+    plot(D(stateID,1:cMod:end)-.9+1,'m','LineWidth',3)%%plots online-decoded state
+end
+if simBuffLoop
+    plot(q_guess_looped-.7,'c','LineWidth',2)
+end
 %plot(qp_guess(2,:),'m','LineWidth',2)
 %xlim([0,1e5]+1e4)
 
 hold off
 set(gcf,'Position',[          64         225        1349         188]);
+
 fr1 = Ee(1,2)*1e3/cMod;
 fr2 =  Ee(2,2)*1e3/cMod;
 tr1 = Te(1,2)*1e3/cMod;
@@ -163,6 +190,7 @@ mu = (fr1+fr2)/2;
 sigma=fr2-mu;
 tau = 1/(mean([tr1,tr2]));
 decodability=tau*sigma*sigma/mu
+
 
 titleStr = sprintf('FR1 = %.3f/sec,  FR2 = %.3f/sec , TR1 = %.3f/sec ,  TR2 = %.3f/sec. logDecodability = %.3f', fr1,fr2,tr1,tr2,log10(decodability))
 title(titleStr)

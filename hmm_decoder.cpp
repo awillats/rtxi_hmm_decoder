@@ -60,6 +60,10 @@ static DefaultGUIModel::variable_t vars[] = {
     "state out", "?",
     DefaultGUIModel::OUTPUT,
   },
+  {
+    "spikes in>out", "?",
+    DefaultGUIModel::OUTPUT,
+  },
 
 
   {
@@ -122,6 +126,7 @@ HmmDecoder::execute(void)
 
   //very convoluted. must fix!
   output(0) = state_guess_buff.back();
+  output(1) = spike_current;
   //output(0) = ((state_guess_buff.back()<1) ? 0 : 1); //candidate for decoder lag issue
 	//-1 is for 0 indexing convention
 
